@@ -8,15 +8,21 @@ fn main() {
 }
 
 #[allow(dead_code)]
-fn parse_pair<T: FromStr>(s: &str, sep: char) -> Option<(T,T)> {
+fn parse_pair<T: FromStr>(s: &str, sep: char) -> Option<(T, T)> {
     match s.find(sep) {
         None => None,
-        Some(idx) => {
-            match (T::from_str(&s[..idx]), T::from_str(&s[idx + 1 ..])) {
-                (Ok(l), Ok(r)) => Some((l,r)),
-                _ => None
-            }
-        }
+        Some(i) => match (T::from_str(&s[..i]), T::from_str(&s[i + 1..])) {
+            (Ok(l), Ok(r)) => Some((l, r)),
+            _ => None,
+        },
+    }
+}
+
+#[allow(dead_code)]
+fn parse_complex(s: &str) -> Option<Complex<f64>> {
+    match parse_pair(s, ',') {
+        Some((re, im)) => Some(Complex { re, im }),
+        None => None
     }
 }
 
