@@ -80,6 +80,7 @@ fn post_gcd(req: &mut Request) -> IronResult<Response> {
     Ok(res)
 }
 
+// todo make this polymorphic
 fn foldl1_gcd(xs: &[u64]) -> u64 {
     let mut r = xs[0];
     for p in &xs[1..] {
@@ -88,6 +89,7 @@ fn foldl1_gcd(xs: &[u64]) -> u64 {
     r
 }
 
+// todo make this polymorphic
 fn gcd(mut n: u64, mut m: u64) -> u64 {
     assert!(n != 0 && m != 0);
     while m != 0 {
