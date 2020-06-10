@@ -70,3 +70,18 @@ fn square_loop(mut x: f64) {
         x = x * x;
     }
 }
+
+#[allow(dead_code)]
+fn pixel_to_point(bounds: (usize, usize),
+                  pixel: (usize, usize),
+                  upper_left: Complex<f64>,
+                  lower_right: Complex<f64>)
+    -> Complex<f64>
+{
+    let (w,h) = (lower_right.re - upper_left.re,
+                 upper_left.im - lower_right.im);
+    Complex{
+        re: upper_left.re + pixel.0 as f64 * w / bounds.0 as f64,
+        im: upper_left.im - pixel.1 as f64 * h / bounds.1 as f64
+    }
+}
