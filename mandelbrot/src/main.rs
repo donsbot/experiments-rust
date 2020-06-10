@@ -5,12 +5,30 @@ use image::png::PNGEncoder;
 use image::ColorType;
 use num::Complex;
 use std::fs::File;
-use std::io::Write;
 use std::str::FromStr;
 
 fn main() {
-    println!("Hello, world!");
-    square_add_loop(1.25);
+    let args: Vec<String> = std::env::args().collect();
+
+    if args.len() != 5 {
+        eprintln!("Usage: mandelbrot FILE PIXELS UPPERLEFT LOWERRIGHT");
+        eprintln!("Example: {} mandel.png 1000x750 -1.20,0.35 -1,0.20",args[0]);
+        std::process::exit(1);
+    }
+
+    let bounds = parse_pair(&args[2], 'x')
+        .expect("error parsing image dimensions");
+    let upper_left = parse_complex(&args[3])
+        .expect("error parsing upper left corner point");
+    let lower_right = parse_complex(&args[4])
+        .expect("error parsing lower right corner point");
+
+    let mut pixels = vec![0; bounds.0 * bounds.1];
+
+    render(&mut pixels, bounds, upper_left, lower_right);
+
+    write_image(&args[1], &pixels, bounds)
+        .expect("error writing PNG file");
 }
 
 #[allow(dead_code)]
@@ -63,6 +81,7 @@ fn complex_square_root(c: Complex<f64>) {
     }
 }
 
+#[allow(dead_code)]
 fn square_add_loop(c: f64) {
     let mut x = 0.;
     loop {
