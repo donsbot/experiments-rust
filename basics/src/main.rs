@@ -39,3 +39,12 @@ fn test_gcd() {
     assert_eq!(gcd(14, 15), 1);
     assert_eq!(gcd(2 * 3 * 5 * 11 * 17, 3 * 77 * 11 * 13 * 19), 3 * 11);
 }
+
+#[allow(dead_code)]
+// allocate a new vector and poke some values in
+fn build_vector() -> Vec<i16> {
+    let mut v: Vec<i16> = Vec::new();
+    v.push(10i16);
+    v.push(20);
+    v
+}
