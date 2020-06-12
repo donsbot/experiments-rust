@@ -115,6 +115,14 @@ fn mk_suffix(x: char, s: &str) -> String {
     t
 }
 
+const V_ARR_0: [u8; 4] = [0x00,0xe0,0x4c,0x68];
+
+// what does this do?
+fn mk_vec(vs: &[u8]) -> Vec<u8> {
+    let us: Vec<u8> = vec!(vs[1]); // weird
+    us
+}
+
 fn main() {
     println!("i8  = {}", V_I8);
     println!("i16 = {}", V_I16);
@@ -160,5 +168,8 @@ fn main() {
     let s = mk_suffix('#',"foo");
     println!("String = {:?}", s);
     println!("String = {:?}", &s[0..3]); // n.b runtime indexing errors
+
+    println!("arr0 = {:?}", V_ARR_0);
+    println!("arr1 = {:?}", mk_vec(&V_ARR_0));
 
 }
