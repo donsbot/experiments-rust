@@ -1,6 +1,6 @@
 const V_I8: i8 = 0;
 const V_I16: i16 = -5i16;
-const V_I32: i32 = 0;
+const V_I32: i32 = 2*8;
 const V_I64: i64 = 20_922_789_888_000_000;
 
 const V_U8: u8 = b'*';
@@ -107,6 +107,14 @@ fn mk_exp_lam(sym: char, e: Expr) -> Expr {
     Expr::LAM(sym, box1)
 }
 
+const V_REF: &i32 = &V_I32;
+
+fn mk_suffix(x: char, s: &str) -> String {
+    let mut t: String = (*s).to_string();
+    t.push(x);
+    t
+}
+
 fn main() {
     println!("i8  = {}", V_I8);
     println!("i16 = {}", V_I16);
@@ -147,4 +155,10 @@ fn main() {
         "exp_4 = {:?}",
         mk_exp_lam('x', mk_exp_op('*', E_EXP_VAR_X, E_EXP_TWO))
     );
+
+    println!("ref = {:?}", V_REF);
+    let s = mk_suffix('#',"foo");
+    println!("String = {:?}", s);
+    println!("String = {:?}", &s[0..3]); // n.b runtime indexing errors
+
 }
