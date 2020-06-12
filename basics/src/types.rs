@@ -123,6 +123,19 @@ fn mk_vec(vs: &[u8]) -> Vec<u8> {
     us
 }
 
+fn mk_3slice(vs: &[u8]) -> &[u8] {
+    &vs[0..3] // 3 elements?
+
+}
+
+const V_FN_TY_0: fn() -> u32 = mk_u32_zero;
+const V_FN_TY_1: fn() -> u32 = || 1;
+const V_FN_TY_2: fn(u32,u32) -> u32 = |a,b| a*b;
+
+fn mk_u32_zero() -> u32 {
+    0
+}
+
 fn main() {
     println!("i8  = {}", V_I8);
     println!("i16 = {}", V_I16);
@@ -171,5 +184,10 @@ fn main() {
 
     println!("arr0 = {:?}", V_ARR_0);
     println!("arr1 = {:?}", mk_vec(&V_ARR_0));
+    println!("arr2 = {:?}", mk_3slice(&V_ARR_0));
 
+    println!("fn0 = {:?}", V_FN_TY_0);
+    println!("fn1 = {:?}", V_FN_TY_0()); // app
+    println!("fn2 = {:?}", V_FN_TY_1()); // app
+    println!("fn2 = {:?}", V_FN_TY_2(4,6));
 }
