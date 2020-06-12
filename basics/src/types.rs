@@ -34,9 +34,9 @@ const V_STRUCT: TyStruct = TyStruct { x: 32., y: 64. };
 
 // tuple-struct ...
 #[derive(Debug)]
-struct TyTupStruct (i32, char);
+struct TyTupStruct(i32, char);
 
-const V_TUP_STRUCT: TyTupStruct = TyTupStruct (42, 'f');
+const V_TUP_STRUCT: TyTupStruct = TyTupStruct(42, 'f');
 
 // from https://doc.rust-lang.org/reference/items/constant-items.html
 const BIT1: u32 = 1 << 0;
@@ -66,12 +66,46 @@ enum X {} // yeah boi
 
 #[allow(dead_code)]
 #[derive(Debug)]
-enum Y { Z, X }
+enum Y {
+    Z,
+    X,
+}
 
 #[allow(dead_code)]
 fn x() -> Y {
-     Y::Z
- }
+    Y::Z
+}
+
+// ok let's do it
+#[derive(Debug)]
+enum Expr {
+    LAM(char, Box<Expr>),
+    EVAL(Box<Expr>, Box<Expr>),
+    CONST(u32),
+    VAR(char),
+    PRIM(char, Box<Expr>, Box<Expr>),
+}
+
+const E_EXP_ONE: Expr = Expr::CONST(1);
+const E_EXP_TWO: Expr = Expr::CONST(2);
+const E_EXP_VAR_X: Expr = Expr::VAR('x');
+
+fn mk_exp_op(op: char, e1: Expr, e2: Expr) -> Expr {
+    let box1 = Box::new(e1);
+    let box2 = Box::new(e2);
+    Expr::PRIM(op, box1, box2)
+}
+
+fn mk_exp_eval(e1: Expr, e2: Expr) -> Expr {
+    let box1 = Box::new(e1);
+    let box2 = Box::new(e2);
+    Expr::EVAL(box1, box2)
+}
+
+fn mk_exp_lam(sym: char, e: Expr) -> Expr {
+    let box1 = Box::new(e);
+    Expr::LAM(sym, box1)
+}
 
 fn main() {
     println!("i8  = {}", V_I8);
@@ -104,4 +138,13 @@ fn main() {
     println!("struct3 = {:?}", V_TUP_STRUCT);
     println!("struct4 = {:?}", V_Z);
     println!("struct5 = {:?}", x());
+
+    println!("exp_1 = {:?}", E_EXP_ONE);
+    println!("exp_2 = {:?}", E_EXP_TWO);
+    println!("exp_3 = {:?}", mk_exp_op('*', E_EXP_ONE, E_EXP_TWO));
+    println!("exp_3 = {:?}", mk_exp_eval(E_EXP_ONE, E_EXP_TWO));
+    println!(
+        "exp_4 = {:?}",
+        mk_exp_lam('x', mk_exp_op('*', E_EXP_VAR_X, E_EXP_TWO))
+    );
 }
