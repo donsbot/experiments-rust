@@ -21,6 +21,58 @@ const V_CHAR: char = '\u{CA0}';
 
 const V_UNIT: () = ();
 
+const V_TUPLE: (char, u8, i32) = ('x', 42, 256);
+
+#[derive(Debug)]
+struct TyStruct {
+    x: f32,
+    y: f32,
+} // type definiton
+
+// named struct
+const V_STRUCT: TyStruct = TyStruct { x: 32., y: 64. };
+
+// tuple-struct ...
+#[derive(Debug)]
+struct TyTupStruct (i32, char);
+
+const V_TUP_STRUCT: TyTupStruct = TyTupStruct (42, 'f');
+
+// from https://doc.rust-lang.org/reference/items/constant-items.html
+const BIT1: u32 = 1 << 0;
+const BIT2: u32 = 1 << 1;
+
+const BITS: [u32; 2] = [BIT1, BIT2];
+const STRING: &str = "bitstring";
+
+#[derive(Debug)]
+struct BitsNStrings<'a> {
+    mybits: [u32; 2],
+    mystring: &'a str,
+}
+
+const BITS_N_STRINGS: BitsNStrings<'static> = BitsNStrings {
+    mybits: BITS,
+    mystring: STRING,
+};
+
+#[derive(Debug)]
+struct Z; // woo hoo
+
+const V_Z: Z = Z;
+
+#[allow(dead_code)]
+enum X {} // yeah boi
+
+#[allow(dead_code)]
+#[derive(Debug)]
+enum Y { Z, X }
+
+#[allow(dead_code)]
+fn x() -> Y {
+     Y::Z
+ }
+
 fn main() {
     println!("i8  = {}", V_I8);
     println!("i16 = {}", V_I16);
@@ -44,4 +96,12 @@ fn main() {
     println!("char = {} {}", V_CHAR, V_CHAR);
 
     println!("unit = {:?}", V_UNIT); // n.b. not Display
+
+    println!("tuple = {:?}", V_TUPLE);
+
+    println!("struct = {:?}", V_STRUCT);
+    println!("struct2 = {:?}", BITS_N_STRINGS);
+    println!("struct3 = {:?}", V_TUP_STRUCT);
+    println!("struct4 = {:?}", V_Z);
+    println!("struct5 = {:?}", x());
 }
