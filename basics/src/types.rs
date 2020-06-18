@@ -7,6 +7,7 @@ const V_U8: u8 = b'*';
 const V_U16: u16 = 5u16;
 const V_U32: u32 = 0;
 const V_U64: u64 = 0;
+const V_U128_1: u128 = 0b0011____0011_1101_0011_0011_11010011_0011_1101_0011_1101_0011_0011_11010011_0011_1101; 
 
 const V_ISIZE: isize = 137;
 const V_USIZE: usize = 0xffff_fc00usize;
@@ -136,6 +137,8 @@ fn mk_u32_zero() -> u32 {
     0
 }
 
+const V_U64_0: u64 = std::u64::MAX; // + 1;
+
 fn main() {
     println!("i8  = {}", V_I8);
     println!("i16 = {}", V_I16);
@@ -190,4 +193,29 @@ fn main() {
     println!("fn1 = {:?}", V_FN_TY_0()); // app
     println!("fn2 = {:?}", V_FN_TY_1()); // app
     println!("fn2 = {:?}", V_FN_TY_2(4,6));
+
+    println!("u64 = {:?}", V_U64_0);
+    // println!("u64 = {:?}", V_U64_0 - V_U64_0 - 1);
+    println!("u64 = {:?}", V_U64_0.wrapping_add(1));
+    println!("u64 = {:?}", V_U64_0.wrapping_add(2));
+    println!("u128 = {:?}", V_U128_1);
+
+    assert_eq!( 10_i8 as u16, 10_u16);
+    assert_eq!( 2525_u16 as i16, 2525_i16); 
+    assert_eq!( -1_i16 as i32, -1_i32); // sign extension
+    assert_eq!( 65535_u16 as i32, 65535_i32); // zero extended
+
+    // bit truncation
+    assert_eq!(1000_i16 as u8, 232_u8);
+    assert_eq!(-1_i8 as u8, 255_u8);
+
+    assert_eq!(2u16.pow(4), 16);
+    assert_eq!(2_u16.pow(4), 16);
+    assert_eq!(u16::pow(2,4), 16);
+
+    println!("pi = {:?}", 3.14159265358979323846264338327950288_f64);
+
+    let c = std::char::from_u32(V_U32 + 123456);
+    println!("char = {:?}", c);
+
 }

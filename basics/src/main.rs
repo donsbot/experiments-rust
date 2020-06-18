@@ -48,3 +48,9 @@ fn build_vector() -> Vec<i16> {
     v.push(20);
     v
 }
+
+fn str_games() -> &str {
+    let t = "I see the eigenvalue in thine eye";
+    let (x, _xs) = str::split_at(t,21);
+    x
+}
