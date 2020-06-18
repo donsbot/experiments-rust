@@ -21,6 +21,9 @@ fn main() {
     }
 
     println!("The GCD of {:?} is {}", ns, r);
+
+    let s = str_games("I see the eigenvalue in thine eye");
+    println!("{}", s);
 }
 
 fn gcd(mut n: u64, mut m: u64) -> u64 {
@@ -49,8 +52,7 @@ fn build_vector() -> Vec<i16> {
     v
 }
 
-// fn str_games() -> &str {
-//     let t = "I see the eigenvalue in thine eye";
-//     let (x, _xs) = str::split_at(t,21);
-//     x
-// }
+fn str_games(t: &str) -> String {
+    let (x, _xs) = str::split_at(t,21);
+    x.to_string()
+}
