@@ -24,6 +24,17 @@ fn main() {
 
     let s = str_games("I see the eigenvalue in thine eye");
     println!("{}", s);
+
+    let b = array_stuff_2();
+    for _ in 2 .. 10 {
+        println!("{:?}", b[0]);
+    }
+
+    let v = vec_stuff();
+    for i in 0 .. v.len() {
+        println!("{:?}", v[i]);
+    }
+    println!("PRODUCT = {}", v.iter().fold(1, |a,b| a*b));
 }
 
 fn gcd(mut n: u64, mut m: u64) -> u64 {
@@ -54,5 +65,42 @@ fn build_vector() -> Vec<i16> {
 
 fn str_games(t: &str) -> String {
     let (x, _xs) = str::split_at(t,21);
+    let t = (12, "eggs"); // stack allocated. unboxed
+    let _b = Box::new(t);
     x.to_string()
+}
+
+#[test]
+fn array_stuff() {
+    let lazy_caterer: [u32; 6] = [1, 2, 4, 7, 11, 16];
+    let taxonomy = ["Animalia", "Anthropoda", "Insecta"];
+
+    assert_eq!(lazy_caterer[3], 7);
+    assert_eq!(taxonomy.len(), 3);
+}
+
+
+
+fn array_stuff_2() -> Box<[bool]> {
+    const A_LIM: usize = 10000;
+    let mut sieve = [true; A_LIM];
+    for i in 2..100 {
+        if sieve[i] {
+            let mut j = i * i;
+            while j < A_LIM {
+                sieve[j] = false;
+                j += i;
+            }
+        }
+    }
+    assert!(sieve[211]);
+    assert!(!sieve[9876]);
+
+    Box::new(sieve)
+}
+
+fn vec_stuff() -> Vec<i32> {
+    let v = vec![2, 3, 5, 7];
+    assert_eq!(v.iter().fold(1, |a, b| a * b), 210);
+    v
 }
