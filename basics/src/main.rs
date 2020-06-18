@@ -121,3 +121,12 @@ fn vec_reverse_functional(mut s: Vec<&str>) -> Vec<&str> {
     s.reverse();
     s // returns the borrowed value
 }
+
+#[allow(dead_code)]
+fn str_stuff() {
+    let noodles: String = "noodles".to_string(); // copied, construct a boxed String
+    let _oodles: &str = &noodles[1..]; // a slice
+    let _poodles: &str = "abc";
+    let _zoodles = &noodles[0..2];
+}
+

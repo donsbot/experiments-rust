@@ -139,6 +139,17 @@ fn mk_u32_zero() -> u32 {
 
 const V_U64_0: u64 = std::u64::MAX; // + 1;
 
+const S_1: &str = "test 1 2 3";
+const S_2: &str = "there \n\
+                   once \
+                   was";
+const S_3: &str = r##"this
+                  is a string
+                  in complete free form.
+         "##;
+
+const S_4: [u8;3] = [b'A', b'B', b'C'];
+
 fn main() {
     println!("i8  = {}", V_I8);
     println!("i16 = {}", V_I16);
@@ -217,5 +228,10 @@ fn main() {
 
     let c = std::char::from_u32(V_U32 + 123456);
     println!("char = {:?}", c);
+
+    println!("string = {:?}", S_1);
+    println!("string = {:?}", S_2);
+    println!("string = {:?}", S_3);
+    println!("string = {:?}", S_4);
 
 }
