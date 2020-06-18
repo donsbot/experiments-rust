@@ -30,11 +30,20 @@ fn main() {
         println!("{:?}", b[0]);
     }
 
-    let v = vec_stuff();
+    let (v,u) = vec_stuff();
     for i in 0 .. v.len() {
         println!("{:?}", v[i]);
     }
-    println!("PRODUCT = {}", v.iter().fold(1, |a,b| a*b));
+    let f = |x: Vec<i32>| x.iter().fold(1, |a,b| a*b);
+    println!("PRODUCT = {}", f(v));
+    println!("PRODUCT = {}", f(u));
+
+    let s: Vec<&str> = vec!["a man", "a plan", "a canal", "panama"];
+    let t = vec_reverse_functional(s); // moves s to vec_stuff
+    // can't use s now
+    for l in t {
+        println!("str := {}", l);
+    }
 }
 
 fn gcd(mut n: u64, mut m: u64) -> u64 {
@@ -99,8 +108,16 @@ fn array_stuff_2() -> Box<[bool]> {
     Box::new(sieve)
 }
 
-fn vec_stuff() -> Vec<i32> {
-    let v = vec![2, 3, 5, 7];
+fn vec_stuff() -> (Vec<i32>, Vec<i32>) {
+    let v = vec![2, 3, 5, 7]; // via a macro
+
+    let u: Vec<i32> = (1..6).collect();
+
     assert_eq!(v.iter().fold(1, |a, b| a * b), 210);
-    v
+    (u,v)
+}
+
+fn vec_reverse_functional(mut s: Vec<&str>) -> Vec<&str> {
+    s.reverse();
+    s // returns the borrowed value
 }
