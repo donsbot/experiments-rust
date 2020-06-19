@@ -28,6 +28,7 @@ fn main() {
 
     // arith sees through one level of indirection
     assert_eq!(&r(6) + &1009, 1729); // fun
+        // &1009 is an anonymous ref with scope of args of assert_eq
 }
 
 fn factorial(n: i128) -> i128 {
