@@ -2,6 +2,12 @@ fn main() {
     print_padovan();
     let s = boxing();
     println!("{}", s);
+    let t = move_thing();
+    println!("{:?}", t);
+    let t = move_thing1();
+    println!("{:?}", t);
+    let t = move_thing2();
+    println!("{}",t);
 }
 
 fn print_padovan() {
@@ -18,4 +24,36 @@ fn boxing() -> String {
     let point = Box::new((0.625, 0.5)); // ptr to heap alloc
     let label = format!("{:?}", point); // ptr to heap alloc str
     label
+}
+
+fn move_thing() -> (Vec<String>, Vec<String>) {
+    let s = vec!["a".to_string(), "b".to_string()];
+    let t = s.clone();
+    // let u = s; // move
+    let u = s.clone();
+    println!("{:?}", s);
+    (t,u)
+}
+
+fn move_thing1() -> String {
+    #[allow(unused_assignments)]
+    let mut s = "Govinda".to_string();
+    s = "Siddhartha".to_string(); // re-assign drops 
+    s
+}
+
+fn move_thing2() -> String {
+    #[derive(Debug)]
+    struct Person {
+        name: String,
+        birth: i32,
+    }
+
+    let mut c = Vec::new(); // new empty vector
+    c.push(Person {
+        name: "Palestrina".to_string(),
+        birth: 1525,
+    });
+
+    format!("{:?}", c)
 }
