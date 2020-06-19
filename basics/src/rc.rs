@@ -8,8 +8,8 @@ use std::rc::Rc;
 fn main() {
     // construct a reference counted pointer
     let s: Rc<String> = Rc::new("foo".to_string());
-    let t: Rc<String> = s.clone();
-    let u: Rc<String> = s.clone();
+    let _t: Rc<String> = s.clone();
+    let _u: Rc<String> = s.clone();
 
     // 3 stack allocated pointers to a heap allocated ref-count box + string ref (unboxed) 
     // all refer to the same block
