@@ -35,6 +35,7 @@ fn main() {
         // need to treat like an MVar
         // mutable static is pretty unsafe
         static mut STASH: &i32 = &128; // needs to be initialized
+        // f can only applied to things with static lifetime
         fn f(p: &'static i32) {
             // tick A
             // ignore the threadsafety explicitly
@@ -44,5 +45,42 @@ fn main() {
         }
         f(&17);
         // lifetime genericity , most specific lifetime etc
+        // not ok: let WORTH_POINTING_AT: i32 = 1000;
+        static WORTH_POINTING_AT: i32 = 1000;
+        // also ok: const WORTH_POINTING_AT: i32 = 1000;
+        f(&WORTH_POINTING_AT);
+    }
+
+    // 5. passing references as arguments
+    {
+        // polymorphic in lifetime
+        fn g<'a>(_p: &'a i32) { }
+        fn h<'a>(_p: &'static i32) { }
+
+        let x = 10;
+        g(&x);
+        const UY: i32 = 10;
+        h(&UY);
+    }
+
+    // 6. slices
+    {
+        // with a single ref in and return a single ref, assume same lifetime
+        // fn smallest(v: &[i32]) -> &i32 {
+        fn smallest<'a>(v: &'a [i32]) -> &'a i32 {
+            let mut s = &v[0];
+            for r in &v[1..] { // iterate by ref
+                if *r < *s {
+                    s = r;
+                }
+            }
+            s
+        }
+
+        {
+            let parabola = [9, 4, 1, 0, 1, 4, 9];
+            let s = smallest(&parabola);
+            assert_eq!(*s, 0);
+        }
     }
 }
