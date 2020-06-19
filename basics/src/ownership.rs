@@ -9,6 +9,9 @@ fn main() {
     let t = move_thing2();
     println!("{}",t);
     move_thing3();
+    move_thing4();
+    let t = move_thing5();
+    println!("{:?}",t);
 }
 
 fn print_padovan() {
@@ -77,4 +80,56 @@ fn move_thing3() {
    //  while h() {
    //      g(x); // loop moves x
    //  }
+
+    let mut v = Vec::new();
+    for i in 101 .. 106 {
+        v.push(i.to_string());
+    }
+    // let third = v[2]; // move fragment of v
+    let _fifth = &v[4]; // a ref is ok
+}
+
+fn move_thing4() {
+    let mut v = Vec::new();
+    for i in 101i8 .. 106 {
+        v.push(i.to_string());
+    }
+
+    // pop value off the end
+    let fifth = v.pop().unwrap();
+    assert_eq!(fifth, "105");
+
+    // remove a value out
+    let second = v.swap_remove(1);
+    assert_eq!(second, "102");
+
+    let third = std::mem::replace(&mut v[2], "substitute".to_string());
+    assert_eq!(third, "103"); // the value that is removed
+
+    println!("{:?}", v);
+
+    let v = vec!["a".to_string(), "b".to_string(), "c".to_string()];
+
+    for mut s in v {
+        s.push('!'); // needs to be mut
+        println!("{}", s);
+    }
+}
+#[derive(Debug)]
+struct Person {
+    name: Option<String>,
+    birth: i32,
+}
+
+fn move_thing5() -> (Option<String>, Vec<Person>) {
+    let mut c = Vec::new();
+    c.push(Person {
+        name: Some("Palestrina".to_string()),
+        birth: 1525,
+    });
+
+    // let n = c[0].name; // move component
+    let n = c[0].name.take(); // swaps for None
+
+    (n, c)
 }
