@@ -8,6 +8,7 @@ fn main() {
     println!("{:?}", t);
     let t = move_thing2();
     println!("{}",t);
+    move_thing3();
 }
 
 fn print_padovan() {
@@ -56,4 +57,24 @@ fn move_thing2() -> String {
     });
 
     format!("{:?}", c)
+}
+
+fn move_thing3() {
+    let c = true;
+    let x = vec![10, 20, 30];
+    if c {
+        f(x); // owns x
+    } else {
+        g(x); // owns x
+    }
+    // h(x); // either path uses it
+
+    fn f(_: Vec<i32>) {}
+    fn g(_: Vec<i32>) {}
+   // fn h() -> bool {true}
+
+   //  let x = vec![10, 20, 30];
+   //  while h() {
+   //      g(x); // loop moves x
+   //  }
 }
