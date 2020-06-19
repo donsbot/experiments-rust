@@ -38,6 +38,7 @@ fn main() {
     ref_2();
     ref_3(true);
     ref_3(false);
+    ref_4();
 }
 
 fn ref_1() {
@@ -79,4 +80,14 @@ fn ref_3(b: bool) { // bottom of stack
     if b { r = &y; } // conditioal assign. r is now mut ref to y
 
     assert!(*r == 10 || *r == 20);
+}
+
+fn ref_4() {
+    struct P { x: i32, y: i32 }
+    let p = P {x: 1000, y: 729 };
+    let r: &P = &p; // r has type ref to P; value is ref to p
+    let rr: &&P = &r;
+    let rrr: &&&P = &rr;
+    assert_eq!(rrr.y, 729);
+    assert_eq!(rrr.x, 1000);
 }
