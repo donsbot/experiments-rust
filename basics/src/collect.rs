@@ -36,6 +36,8 @@ fn main() {
 
     ref_1();
     ref_2();
+    ref_3(true);
+    ref_3(false);
 }
 
 fn ref_1() {
@@ -53,9 +55,28 @@ fn ref_1() {
 // since references are so widely used  the '.' operator on methods implicitly dereferences its
 // left operand
 fn ref_2() {
-    struct A { name: &'static str, _bechdel_pass: bool }
+    struct A { name: &'static str, _bechdel_pass: bool } // note the static lifetimes
+    #[allow(dead_code)]
+    struct B { name: String } // note the static lifetimes
     let aria = A { name: "Aria: The Animation", _bechdel_pass: true };
+    #[allow(unused_variables)]
+    let brib = B { name: "Aria: The Animation".to_string() }; 
     let a_ref = &aria;
     assert_eq!(a_ref.name, "Aria: The Animation");
     assert_eq!((*a_ref).name, "Aria: The Animation");
+
+    let mut v = vec![1973, 1968];
+    v.sort();
+    (&mut v).sort();
+}
+
+fn ref_3(b: bool) { // bottom of stack
+    let x = 10; //  stack
+    let y = 20; // stack
+    let mut r = &x; // mut ref to x (on stack)
+
+    // assignment writes to the location of the referent. simple.
+    if b { r = &y; } // conditioal assign. r is now mut ref to y
+
+    assert!(*r == 10 || *r == 20);
 }
