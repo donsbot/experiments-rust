@@ -41,5 +41,56 @@ fn main() {
         let c = extend_pure(&a, &b);
         println!("{:?}", a);
         println!("{:?}", c);
+
+        let mut wave = Vec::new();
+        let head = vec![0.0, 1.0];
+        let tail = [0.0, -1.0];
+        extend_m(&mut wave, &head);
+        extend_m(&mut wave, &tail);
+
+        // this looks dubious. it might reallocate...
+        // mutable and immutable lifetimes shouldn't overlap
+        // extend_m(&mut wave, &wave);
+
+        // this should be fine:
+        let wave2 = extend_pure(&wave, &wave);
+        println!("{:?}", wave2);
+    }
+    /*
+     * shared references to values must be read-only in the lifetime of the shared ref.
+     * mutable references mean those values are now exclusive to the lifetime of the reference
+     */
+
+    // 3. mutable borrowing and sharing examples, and ownership changes
+    // n.b. similar example: borrow checker is shrinking the lifetimes from the book, so you need
+    // to extend them to make it work
+    {
+        let /*mut*/ x = 10;
+        let r1 = &x;
+        let r2 = &x;    // shared ro borrow: ok
+        // NO: x += 10;        // an effect. but it should be immutable now
+        // NO: let m = &mut x; // borrow a mutable ref, should invalidate 'x' for lifetime of m
+        assert_eq!(r1, r2); // extend lifetime to make it work
+
+        let mut y = 20;
+        let _m1 = &mut y;
+        // NO: let m2 = &mut y; // a second mutable borrow. inconsistent
+        // assert_eq!(m1, m2); // extend lifetime to make it work
+
+        let /*mut*/ w = (107, 109); // mutable tuple
+        let r = &w;
+        let _r0 = &r.0; // OK. more shared ref
+        // let m1 = &mut r.1; // borrow shared mut ref to 2nd component. nope
+
+        let mut v = (136, 139);
+        let m = &mut v;
+        let m0 = &mut m.0; // reborrow mutable from mutable is ok?
+        *m0 = 137; // destructive assignment to first field of tuple. to de-ref
+        let _r1 = &m.1;
+        // let x = v.1; // NO: use of borrowed value, still in scope
+        assert_eq!(m0,m0); // extend lifetime
+        let y1 = v.0; // copy . this is ok because shorter scoep of the mutables
+        println!("{:?}",y1); // fine
+
     }
 }
