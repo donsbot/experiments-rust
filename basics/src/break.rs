@@ -112,9 +112,9 @@ fn main() {
     // 8. lifetime params: more
     // this works (the book says it shouldn't because lifetime of x and y are different)
     {
-        struct U<'a> {
+        struct U<'a,'b> {
             x: &'a i32,
-            y: &'a i32
+            y: &'b i32
         }
 
         let a = 10;
@@ -130,7 +130,7 @@ fn main() {
                 assert_eq!(*r2, 20);
             }
         }
-        assert_eq!(a, 10);
+        assert_eq!(*r1, 10); // this extends the lifetime until it works
 
     }
 
