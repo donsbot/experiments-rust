@@ -142,10 +142,58 @@ fn main() {
          * far to be safe.
          *
          * To be fixed in the second edition
-         * /
+         */
 
     }
 
+    // 9. omitting parameters
+    {
+        struct S<'a, 'b> {
+            x: &'a i32,
+            y: &'b i32
+        }
+        let a = S { x: &10 , y: &20};
 
+        // interesting type conversion through references
+        fn sum_r_xy<'a, 'b, 'c>(r: &'a i32, s: S<'b, 'c>) -> i32 {
+            r + s.x + s.y
+        }
 
+        assert_eq!(sum_r_xy(&8, a), 38);
+
+        // single lifetime: so you can elide them
+        fn first_third(point: &[i32; 3]) -> [i32; 2] {
+            [point[0], point[2]]
+        }
+
+        let v: [i32; 3] = [1, 2, 3];
+        let w: [i32; 2] = [1,    3];
+        assert_eq!(first_third(&v), w);
+
+    }
+
+    // 10. methods
+    {
+        struct T {
+            els: Vec<String>,
+        }
+        impl T {
+            fn findl_by_prefix(&self, prefix: &str) -> Option<&String> {
+                for e in &self.els {
+                    if e.starts_with(prefix) {
+                        return Some(&e);  // a ref.
+                    }
+                }
+                None
+            }
+        }
+
+        let ks = vec!["aardvark".to_string(),"aaple".to_string(), "boo".to_string()];
+        let t = T { els: ks };
+        match t.findl_by_prefix(&"aa") {
+            None => { println!("{}", "None found"); }
+            Some(xs) => println!("{:?}", xs)
+        };
+
+    }
 }
