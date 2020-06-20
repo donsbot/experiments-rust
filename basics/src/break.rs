@@ -88,6 +88,7 @@ fn main() {
     // 7. structs with references
     // you must pass a lifetime param through the struct to any references contained
     {
+        #[derive(Debug,PartialEq,Clone)]
         struct S<'a> {
             r: &'a i32,
         }
@@ -95,5 +96,19 @@ fn main() {
         let x = 10;
         let s = S { r: &x }; // some lifetime 'a, which must be within x's lifetime
         assert_eq!(*s.r, 10);
+
+        // and they're contagious
+        struct T<'a> {
+            s: S<'a>
+        }
+
+        let u = s.clone();
+        let t = T { s }; // move 's'
+
+        // can't do this: assert_eq!(t.s, s);
+        assert_eq!(t.s, u);
     }
+
+
+
 }
