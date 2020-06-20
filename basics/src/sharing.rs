@@ -10,7 +10,7 @@ fn main() {
         {
             let r = &v; // borrow
             r[0]; // read for its effect?
-            // drop r
+                  // drop r
         }
         let aside = v; // we can still use 'v', move v to aside
         let r = &aside;
@@ -41,7 +41,5 @@ fn main() {
         let c = extend_pure(&a, &b);
         println!("{:?}", a);
         println!("{:?}", c);
-
     }
-    
 }
