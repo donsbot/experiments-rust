@@ -35,7 +35,7 @@ fn main() {
         // need to treat like an MVar
         // mutable static is pretty unsafe
         static mut STASH: &i32 = &128; // needs to be initialized
-        // f can only applied to things with static lifetime
+                                       // f can only applied to things with static lifetime
         fn f(p: &'static i32) {
             // tick A
             // ignore the threadsafety explicitly
@@ -54,8 +54,8 @@ fn main() {
     // 5. passing references as arguments
     {
         // polymorphic in lifetime
-        fn g<'a>(_p: &'a i32) { }
-        fn h<'a>(_p: &'static i32) { }
+        fn g<'a>(_p: &'a i32) {}
+        fn h<'a>(_p: &'static i32) {}
 
         let x = 10;
         g(&x);
@@ -69,7 +69,8 @@ fn main() {
         // fn smallest(v: &[i32]) -> &i32 {
         fn smallest<'a>(v: &'a [i32]) -> &'a i32 {
             let mut s = &v[0];
-            for r in &v[1..] { // iterate by ref
+            for r in &v[1..] {
+                // iterate by ref
                 if *r < *s {
                     s = r;
                 }
@@ -82,5 +83,17 @@ fn main() {
             let s = smallest(&parabola);
             assert_eq!(*s, 0);
         }
+    }
+
+    // 7. structs with references
+    // you must pass a lifetime param through the struct to any references contained
+    {
+        struct S<'a> {
+            r: &'a i32,
+        }
+
+        let x = 10;
+        let s = S { r: &x }; // some lifetime 'a, which must be within x's lifetime
+        assert_eq!(*s.r, 10);
     }
 }
