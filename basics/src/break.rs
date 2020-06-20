@@ -109,6 +109,31 @@ fn main() {
         assert_eq!(t.s, u);
     }
 
+    // 8. lifetime params: more
+    // this works (the book says it shouldn't because lifetime of x and y are different)
+    {
+        struct U<'a> {
+            x: &'a i32,
+            y: &'a i32
+        }
+
+        let a = 10;
+        let r1;
+        let r2;
+        {
+            let y = 20;
+            {
+                let s = U { x: &a, y: &y };
+                r1 = s.x;
+                assert_eq!(*r1, 10);
+                r2 = s.y;
+                assert_eq!(*r2, 20);
+            }
+        }
+        assert_eq!(a, 10);
+
+    }
+
 
 
 }
