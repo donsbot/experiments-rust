@@ -131,6 +131,18 @@ fn main() {
             }
         }
         assert_eq!(*r1, 10); // this extends the lifetime until it works
+        /*
+         * [Know PR]
+         * Page 111 bottom code example
+         *
+         * The reader is correct: the book says that code doesn't compile, but it does with recent
+         * versions of Rust. This is because the borrow checker has been improved: despite its
+         * scope `r` is never actually used beyond the lifetime of `y`, so the borrow checker
+         * concludes that the lifetime of the two references in `S` does not actually extend too
+         * far to be safe.
+         *
+         * To be fixed in the second edition
+         * /
 
     }
 
