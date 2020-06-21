@@ -198,7 +198,31 @@ fn main() {
             println!("{:?}", f2());
         }
     }
+
+    // whoa. flow sensitive typing
+    #[allow(unreachable_code)]
+    {
+        // break and return don't produce a value
+        let mut n: u64 = 1;
+        let a: () = while n < 10 { n *= 2 };
+        println!("{:?}", a);
+
+        // this produces a value of any type
+        // this type is that it can be cast to any other one
+        // a bottom value
+        fn fix() -> ! {
+            loop {
+                //break; // can't break if it diverges
+            }
+        }
+        // let _v: Option<u64> = fix();
+
+        let _x: &[i32] = &[1, 2, undefined()];
+
+    }
 }
 
 // can't have a 'return' outside of fn body :
 const FOO: u64 = /*return*/ 0xdeadbeef;
+
+fn undefined() -> ! { loop {} }
