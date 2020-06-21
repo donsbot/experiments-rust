@@ -129,5 +129,21 @@ fn main() {
             }
         };
         println!("{:?}", n);
+
+        let mut i: u64 = 1;
+        loop {
+            if i >= 100 {
+                break;
+            }
+            i *= 2;
+        };
+        println!("{:?}", i);
+
+        // for is a 'map' over a collection. nice.
+        let mut n: u64 = 0;
+        for i in 0..20 { // n.b. while < 20!!!
+            n += i;
+        };
+        println!("{:?}", n);
     }
 }
