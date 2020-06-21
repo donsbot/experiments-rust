@@ -220,7 +220,17 @@ fn main() {
         // let _v: Option<u64> = fix();
 
         let _x: &[i32] = &[1, 2, undefined()];
+
+        fix();
     }
+
+    // some syntax stuff
+    {
+        let mut x = /* Vec<i32>::with_capacity(1024); */
+                    Vec::<i32>::with_capacity(1024);
+        println!("{:?}", x.pop());
+    }
+
 }
 
 // can't have a 'return' outside of fn body :
