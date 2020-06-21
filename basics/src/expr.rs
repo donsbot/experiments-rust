@@ -111,4 +111,23 @@ fn main() {
             println!("OK");
         };
     }
+
+    // 6. loops
+    {
+        let mut n: u64 = 1;
+        while n < 100 {
+            n *= 2;
+        };
+        println!("{}", n);
+
+        let mut n: Option<u64> = Some(1);
+        while let Some(x) = n {
+            if x < 100 {
+                n = Some(x*2);
+            } else {
+                break;
+            }
+        };
+        println!("{:?}", n);
+    }
 }
