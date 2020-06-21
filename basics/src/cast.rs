@@ -1,4 +1,5 @@
 // UB?
+// https://github.com/rust-lang/rust/issues/10184 ?
 fn main() {
     {
         let a: f64 = 1000000.;
