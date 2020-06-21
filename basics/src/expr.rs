@@ -100,4 +100,15 @@ fn main() {
 
         println!("{:?}", res);
     }
+
+    // 5. if let
+    {
+        let v = Some("foo");
+
+        if let None = v {
+            println!("WAT");
+        } else {
+            println!("OK");
+        };
+    }
 }
