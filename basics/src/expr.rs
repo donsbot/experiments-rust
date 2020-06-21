@@ -117,17 +117,17 @@ fn main() {
         let mut n: u64 = 1;
         while n < 100 {
             n *= 2;
-        };
+        }
         println!("{}", n);
 
         let mut n: Option<u64> = Some(1);
         while let Some(x) = n {
             if x < 100 {
-                n = Some(x*2);
+                n = Some(x * 2);
             } else {
                 break;
             }
-        };
+        }
         println!("{:?}", n);
 
         let mut i: u64 = 1;
@@ -136,30 +136,32 @@ fn main() {
                 break;
             }
             i *= 2;
-        };
+        }
         println!("{:?}", i);
 
         // for is a 'map' over a collection. nice.
         let mut n: u64 = 0;
-        for i in 0..20 { // n.b. while < 20!!!
+        for i in 0..20 {
+            // n.b. while < 20!!!
             n += i;
-        };
+        }
         println!("{:?}", n);
 
         let mut v = vec![];
-        for i in 0..20 { // 20 elements. last element has value '19'
+        for i in 0..20 {
+            // 20 elements. last element has value '19'
             v.push(i);
-        };
+        }
         println!("{:?}", v);
         println!("{:?}", v.len());
 
-        let strs: Vec<String> = vec!["a".to_string(),"b".to_string()];
+        let strs: Vec<String> = vec!["a".to_string(), "b".to_string()];
         for s in &strs {
-            println!("{}",s);
+            println!("{}", s);
         }
         println!("{}", strs.len());
 
-        let mut strs: Vec<String> = vec!["a".to_string(),"b".to_string()];
+        let mut strs: Vec<String> = vec!["a".to_string(), "b".to_string()];
         for s in &mut strs {
             s.push('#');
         }
@@ -167,8 +169,7 @@ fn main() {
 
         // interesting. loop lifetimes
         let bs = [1, 2, 3];
-        'foo:
-        for _ in &bs {
+        'foo: for _ in &bs {
             break 'foo;
         }
 
@@ -179,7 +180,7 @@ fn main() {
             }
             #[allow(unreachable_code)]
             fn f1() -> usize {
-                let _v = return 2*128; // weird
+                let _v = return 2 * 128; // weird
                 0 /* dead code */
             }
             println!("{:?}", f0());
@@ -187,24 +188,16 @@ fn main() {
 
             #[allow(unreachable_code)]
             fn f2<'a>() -> &'a [u64] {
-
-                let _a: &[u64] = &[ 1
-                        , 2
-                        , return &[FOO] //f2 evaluates to this
-                        ];
-                println!("{:?}",_a);
-
+                let _a: &[u64] = &[
+                    1,
+                    2,
+                    return &[FOO], //f2 evaluates to this
+                ];
+                println!("{:?}", _a);
             }
             println!("{:?}", f2());
-
         }
-
     }
-
-
-
-
-
 }
 
 // can't have a 'return' outside of fn body :
