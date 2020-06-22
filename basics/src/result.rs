@@ -1,24 +1,29 @@
+use std::io;
 
 // Error Handling: Result
-fn main () {
+fn main() {
+    let arr: &[u8] = &[6, 1, 2, 0, 1, 2, 3, 4, 5, 6];
 
-    let arr: &[u8] = &[6,1,2,0,1,2,3,4,5,6];
+    println!("{:?}", find(&|x| { x / 3 == 2 }, arr));
+    println!("{:?}", find(&|x| { x == 9 }, arr));
+    println!("{:?}", find(&|x| { x == 6 }, arr));
 
-    println!("{:?}", find(&|x|{x / 3 == 2},arr));
-    println!("{:?}", find(&|x|{x==9},arr));
-    println!("{:?}", find(&|x|{x==6},arr));
-
+    let s = match get_weather() {
+        Ok(v) => format!("bool : {}", v),
+        Err(e) => format!("err : {}", e),
+    };
+    println!("{}", s);
 }
 
-fn find( f: &dyn Fn(u8) -> bool , p: &[u8]) -> Option<u8> {
-    match find_index(f,p) {
+fn find(f: &dyn Fn(u8) -> bool, p: &[u8]) -> Option<u8> {
+    match find_index(f, p) {
         Some(n) => Some(p[n]),
-        _ => None
+        _ => None,
     }
 }
 
 fn find_index(k: &dyn Fn(u8) -> bool, p: &[u8]) -> Option<usize> {
-    for n in 0 .. p.len() {
+    for n in 0..p.len() {
         if k(p[n]) {
             return Some(n);
         }
@@ -54,3 +59,7 @@ findIndex k (PS x s l) = accursedUnutterablePerformIO $ withForeignPtr x $ \f ->
 {-# INLINE findIndex #-}
 
 */
+
+fn get_weather() -> Result<bool, io::Error> {
+    Ok(true)
+}
