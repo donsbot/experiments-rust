@@ -24,40 +24,47 @@ fn main() {
         println!("It's not an error!");
     }
 
-    println!("ok? {}", match get_weather().ok() {
-        Some(true) => "true enough",
-        _ => "not really true",
-    });
+    println!(
+        "ok? {}",
+        match get_weather().ok() {
+            Some(true) => "true enough",
+            _ => "not really true",
+        }
+    );
 
-    println!("err? {}", match get_weather().err() {
-        Some(e) => format!("{:?}",e),
-        _ => "not really an error".to_string(),
-    });
+    println!(
+        "err? {}",
+        match get_weather().err() {
+            Some(e) => format!("{:?}", e),
+            _ => "not really an error".to_string(),
+        }
+    );
 
     println!("all good: {}", get_weather().unwrap_or(false));
-    println!("all good: {}", get_weather().expect("well that's not success"));
+    println!(
+        "all good: {}",
+        get_weather().expect("well that's not success")
+    );
 
     if let Err(e) = wrapping() {
-        println!("{:?}",e);
+        println!("{:?}", e);
         std::process::exit(1);
     }
 
     match get_weather2() {
         Ok(_) => std::process::exit(42),
-        Err(MyError { problem } ) => println!("{}", problem),
+        Err(MyError { problem }) => println!("{}", problem),
     };
-
 }
 
 fn wrapping() -> Result<(), io::Error> {
-
     // unwrap
     let _v = get_weather()?;
 
     // equiv to
     let _v = match get_weather() {
         Ok(v) => v,
-        Err(e) => return Err(e)
+        Err(e) => return Err(e),
     };
 
     Ok(())
@@ -117,14 +124,16 @@ fn get_weather() -> MyBoolResult {
 
 fn get_weather2() -> Result<bool, MyError> {
     if 1 > 2 {
-        Err(MyError{problem: "This cannot be".to_string()})
+        Err(MyError {
+            problem: "This cannot be".to_string(),
+        })
     } else {
         Ok(true)
     }
 }
 
 /* implement a custom error type */
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct MyError {
-    pub problem: String
+    pub problem: String,
 }
