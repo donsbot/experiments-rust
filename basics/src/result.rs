@@ -37,6 +37,30 @@ fn main() {
     println!("all good: {}", get_weather().unwrap_or(false));
     println!("all good: {}", get_weather().expect("well that's not success"));
 
+    if let Err(e) = wrapping() {
+        println!("{:?}",e);
+        std::process::exit(1);
+    }
+
+    match get_weather2() {
+        Ok(_) => std::process::exit(42),
+        Err(MyError { problem } ) => println!("{}", problem),
+    };
+
+}
+
+fn wrapping() -> Result<(), io::Error> {
+
+    // unwrap
+    let _v = get_weather()?;
+
+    // equiv to
+    let _v = match get_weather() {
+        Ok(v) => v,
+        Err(e) => return Err(e)
+    };
+
+    Ok(())
 }
 
 fn find(f: &dyn Fn(u8) -> bool, p: &[u8]) -> Option<u8> {
@@ -84,6 +108,23 @@ findIndex k (PS x s l) = accursedUnutterablePerformIO $ withForeignPtr x $ \f ->
 
 */
 
-fn get_weather() -> Result<bool, io::Error> {
+type MyResult<T> = Result<T, io::Error>;
+type MyBoolResult = MyResult<bool>;
+
+fn get_weather() -> MyBoolResult {
     Ok(true)
+}
+
+fn get_weather2() -> Result<bool, MyError> {
+    if 1 > 2 {
+        Err(MyError{problem: "This cannot be".to_string()})
+    } else {
+        Ok(true)
+    }
+}
+
+/* implement a custom error type */
+#[derive(Debug,Clone)]
+pub struct MyError {
+    pub problem: String
 }
