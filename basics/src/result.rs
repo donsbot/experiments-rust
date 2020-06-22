@@ -1,3 +1,5 @@
+// Result is like all sorts of Maybe/Optional monad stuff
+//
 use std::io;
 
 // Error Handling: Result
@@ -13,6 +15,28 @@ fn main() {
         Err(e) => format!("err : {}", e),
     };
     println!("{}", s);
+
+    if get_weather().is_ok() {
+        println!("It's ok!");
+    }
+
+    if !get_weather().is_err() {
+        println!("It's not an error!");
+    }
+
+    println!("ok? {}", match get_weather().ok() {
+        Some(true) => "true enough",
+        _ => "not really true",
+    });
+
+    println!("err? {}", match get_weather().err() {
+        Some(e) => format!("{:?}",e),
+        _ => "not really an error".to_string(),
+    });
+
+    println!("all good: {}", get_weather().unwrap_or(false));
+    println!("all good: {}", get_weather().expect("well that's not success"));
+
 }
 
 fn find(f: &dyn Fn(u8) -> bool, p: &[u8]) -> Option<u8> {
