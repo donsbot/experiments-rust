@@ -1,4 +1,7 @@
 pub fn main() {
+
+    println!("** exp.rs **");
+
     let x: &str = match Some(("foo", 7)) {
         None => "none",
         Some((y @ "bar", _)) => y,
@@ -208,10 +211,12 @@ pub fn main() {
             n *= 2
         };
         println!("{:?}", a);
+        println!("about to fix:");
 
         // this produces a value of any type
         // this type is that it can be cast to any other one
         // a bottom value
+        #[allow(dead_code)]
         fn fix() -> ! {
             loop {
                 //break; // can't break if it diverges
@@ -219,9 +224,11 @@ pub fn main() {
         }
         // let _v: Option<u64> = fix();
 
-        let _x: &[i32] = &[1, 2, undefined()];
+        // let _x: &[i32] = &[1, 2, undefined()];
 
-        fix();
+        // fix();
+
+        println!("fixed");
     }
 
     // some syntax stuff
@@ -236,6 +243,7 @@ pub fn main() {
 // can't have a 'return' outside of fn body :
 const FOO: u64 = /*return*/ 0xdeadbeef;
 
+#[allow(dead_code)]
 fn undefined() -> ! {
     loop {}
 }
