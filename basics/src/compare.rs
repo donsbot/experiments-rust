@@ -1,5 +1,5 @@
 // structural equality. 
-fn main() {
+pub fn main() {
     let x = 10;
     let y = 10;
     let rx = &x;

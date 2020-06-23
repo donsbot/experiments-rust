@@ -1,5 +1,13 @@
 use std::str::FromStr;
 
+mod foo;
+mod r#break;
+mod cast;
+mod collect;
+mod compare;
+mod copytypes;
+mod expr;
+
 fn main() {
     let mut ns: Vec<u64> = Vec::new();
 
@@ -44,6 +52,20 @@ fn main() {
     for l in t {
         println!("str := {}", l);
     }
+
+    // foo module
+    let foo = foo::new_foo(43);
+    println!("Foo: {:?}", foo);
+
+    // break module
+    r#break::break_main();
+
+    cast::cast_main();
+    collect::main();
+    compare::main();
+    copytypes::main();
+    expr::main();
+
 }
 
 fn gcd(mut n: u64, mut m: u64) -> u64 {

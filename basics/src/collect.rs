@@ -22,7 +22,7 @@ fn sort_works(t: &mut Table) {
     }
 }
 
-fn main() {
+pub fn main() {
     let mut t = Table::new();
 
     t.insert("a".to_string(),

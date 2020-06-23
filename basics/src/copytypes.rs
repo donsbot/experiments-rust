@@ -1,4 +1,4 @@
-fn main() {
+pub fn main() {
 
     #[derive(Copy,Clone)] // make it a copy type
     struct Label { 

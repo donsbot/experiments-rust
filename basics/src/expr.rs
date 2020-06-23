@@ -1,4 +1,4 @@
-fn main() {
+pub fn main() {
     let x: &str = match Some(("foo", 7)) {
         None => "none",
         Some((y @ "bar", _)) => y,

@@ -1,4 +1,4 @@
-fn main() {
+pub fn break_main() {
     // 1. can't borrow a reference to a local variable and take it out of scope
     {
         let r: &i64 = &1; // empty ref binding

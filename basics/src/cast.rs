@@ -1,6 +1,6 @@
 // UB?
 // https://github.com/rust-lang/rust/issues/10184 ?
-fn main() {
+pub fn cast_main() {
     {
         let a: f64 = 1000000.;
         let b = a as i16;
