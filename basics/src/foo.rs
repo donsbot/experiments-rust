@@ -17,6 +17,6 @@ fn new_secret_foo(deep_foo: u64) -> Foo {
 
 #[test]
 fn main() {
-    let foo = foo::new_foo(42);
+    let foo = new_foo(42);
     println!("Foo: {:?}", foo);
 }
