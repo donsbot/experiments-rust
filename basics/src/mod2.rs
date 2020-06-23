@@ -35,7 +35,11 @@ pub mod m {
         Empty,
     }
 
-    pub const EMPTY_TREE: Tree<u64> = Tree::Empty;
+    // inlined:
+    // pub const EMPTY_TREE_CONST: Tree<u64> = Tree::Empty;
+
+    // at program initialization time
+    pub static EMPTY_TREE: Tree<u64> = Tree::Empty;
 
     // constructors
     pub fn mk_one_node<'a, T>(v: T) -> Tree<'a, T> {
@@ -56,7 +60,7 @@ pub fn main() {
     type T<'a> = Tree<'a, u64>;
 
     // Empty
-    let zero: T = m::EMPTY_TREE;
+    let zero: &Tree<'static,u64> = &m::EMPTY_TREE;
 
     // Node { left: Empty, right: Empty, value: 1 }
     let one: T = m::mk_one_node(1);
