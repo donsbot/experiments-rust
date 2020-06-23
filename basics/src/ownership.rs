@@ -1,4 +1,4 @@
-fn main() {
+pub fn main() {
     print_padovan();
     let s = boxing();
     println!("{}", s);

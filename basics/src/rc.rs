@@ -5,7 +5,7 @@
 //
 use std::rc::Rc;
 
-fn main() {
+pub fn main() {
     // construct a reference counted pointer
     let s: Rc<String> = Rc::new("foo".to_string());
     let _t: Rc<String> = s.clone();

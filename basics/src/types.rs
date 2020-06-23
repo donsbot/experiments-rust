@@ -150,7 +150,7 @@ const S_3: &str = r##"this
 
 const S_4: [u8;3] = [b'A', b'B', b'C'];
 
-fn main() {
+pub fn main() {
     println!("i8  = {}", V_I8);
     println!("i16 = {}", V_I16);
     println!("i32 = {}", V_I32);

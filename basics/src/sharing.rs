@@ -2,7 +2,7 @@
  * Pages 114 - 122
  * Sharing and mutation
  */
-fn main() {
+pub fn main() {
     // 1. sharing versus mutation
     {
         // v: ptr to contiguous block of i32 on heap, with capacity

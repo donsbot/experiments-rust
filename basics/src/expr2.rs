@@ -1,4 +1,4 @@
-fn main() {
+pub fn main() {
     // ranges
     // ranges are 'half open'. they include the start value but not the end
     {
@@ -16,9 +16,11 @@ fn main() {
 
         // interesting. this goes to infinity and will die with a overflow error
         // NOT like enumFrom
-        let b: std::ops::RangeFrom<u8> = 1..;
+//         let b: std::ops::RangeFrom<u8> = 1..;
+        let b: std::ops::Range<u8> = 1..255;
         for i in b {
             print!("{}, ", i);
         }
+        println!("done");
     }
 }

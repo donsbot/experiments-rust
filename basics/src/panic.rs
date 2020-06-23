@@ -1,6 +1,6 @@
 // rustc -C panic=abbort panic.rs
 #[allow(unreachable_code)]
-fn main() {
+pub fn main() {
     // unwinding
     {
         println!("{}", pirate_share(100, 15));

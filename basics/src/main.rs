@@ -1,12 +1,21 @@
 use std::str::FromStr;
 
-mod foo;
 mod r#break;
 mod cast;
 mod collect;
 mod compare;
 mod copytypes;
 mod expr;
+mod expr2;
+mod r#f64;
+mod foo;
+mod lib;
+mod ownership;
+mod panic;
+mod rc;
+mod result;
+mod sharing;
+mod types;
 
 fn main() {
     let mut ns: Vec<u64> = Vec::new();
@@ -65,6 +74,20 @@ fn main() {
     compare::main();
     copytypes::main();
     expr::main();
+    expr2::main();
+    r#f64::main();
+
+    println!("{}", lib::sum_f1(1000));
+    println!("{}", lib::sum_f2(1000));
+    println!("{}", lib::sum_f3(1000));
+
+    ownership::main();
+    rc::main();
+    result::main();
+    sharing::main();
+    types::main();
+
+    panic::main(); // done
 
 }
 

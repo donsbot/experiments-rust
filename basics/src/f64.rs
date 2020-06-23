@@ -1,4 +1,4 @@
-fn main() {
+pub fn main() {
     let m = 10.0_f64;
     let x = 4.0_f64;
     let b = 60.0_f64;
