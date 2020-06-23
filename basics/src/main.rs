@@ -11,6 +11,7 @@ mod r#f64;
 mod foo;
 mod lib;
 mod modules;
+mod mod2;
 mod ownership;
 mod panic;
 mod rc;
@@ -78,6 +79,7 @@ fn main() {
     expr2::main();
     r#f64::main();
     modules::main();
+    mod2::main();
 
     println!("{}", lib::sum_f1(1000));
     println!("{}", lib::sum_f2(1000));

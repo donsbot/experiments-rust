@@ -23,4 +23,23 @@ pub fn main() {
         x.insert("bar".to_string(), 41);
         println!("{}", x.len());
     }
+
+    // module use
+    {
+        let x = m::new_a(42);
+        println!("{:?}", x);
+    }
+}
+
+#[derive(Debug)]
+pub struct A { a : u64 }
+
+mod m {
+    // super is an alias for the parent module
+    // 'self' is an alias for the currnent one
+    use super::A; // only imports public things
+
+    pub fn new_a(a: u64) -> A {
+        A { a }
+    }
 }
