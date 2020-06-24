@@ -1,8 +1,15 @@
 [package]
 name = "difference-list"
 version = "0.1.0"
-authors = ["Don Stewart <dons@fb.com>"]
-edition = "2018"
+license = "BSD3"
+authors = ["Don Stewart <dons00@gmail.com>"]
+repository = ""
+documentation = ""
+description = """
+Difference lists are a list-like type supporting O(1) append. This is
+particularly useful for efficient logging and pretty printing, where list
+append quickly becomes too expensive.
+"""
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
