@@ -12,15 +12,28 @@ pub mod dlist {
         phantom: PhantomData<A>,
     }
 
-// pub struct DList<A> { unDL: &(dyn Fn(&[A]) -> &[A]) }
+    // pub struct DList<A> { unDL: &(dyn Fn(&[A]) -> &[A]) }
+    //
+    /*
+    impl DList<u64> {
 
-    pub fn empty<A>() -> DList<A> {
-        DList{phantom: PhantomData}
+        pub fn new() -> DList<u64> {
+            empty()
+        }
+
     }
+    */
+
+    // free functional version
+    pub fn empty<A>() -> DList<A> {
+        DList {
+            phantom: PhantomData,
+        }
+    }
+
 
     #[allow(dead_code)]
     fn id<A>(a: A) -> A {
         a
     }
-
 }
