@@ -8,6 +8,7 @@ mod copytypes;
 mod expr2;
 mod expr;
 mod foo;
+mod r#impl;
 mod lib;
 mod mod2;
 mod modules;
@@ -80,6 +81,7 @@ fn main() {
     expr::main();
     expr2::main();
     r#f64::main();
+    r#impl::main();
     modules::main();
     mod2::main();
 
