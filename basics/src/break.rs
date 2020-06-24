@@ -191,7 +191,7 @@ pub fn break_main() {
         let ks = vec!["aardvark".to_string(),"aaple".to_string(), "boo".to_string()];
         let t = T { els: ks };
         match t.findl_by_prefix(&"aa") {
-            None => { println!("{}", "None found"); }
+            None => { println!("None found"); }
             Some(xs) => println!("{:?}", xs)
         };
 

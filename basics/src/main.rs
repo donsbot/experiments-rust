@@ -36,28 +36,28 @@ fn main() {
     }
 
     // foldl1 over args
-    let mut r = ns[0]; // there's at least one argument
+    let mut r1 = ns[0]; // there's at least one argument
     for p in &ns[1..] {
-        r = gcd(r, *p);
+        r1 = gcd(r1, *p);
     }
 
-    println!("The GCD of {:?} is {}", ns, r);
+    println!("The GCD of {:?} is {}", ns, r1);
 
-    let s = str_games("I see the eigenvalue in thine eye");
-    println!("{}", s);
+    let s1 = str_games("I see the eigenvalue in thine eye");
+    println!("{}", s1);
 
-    let b = array_stuff_2();
+    let b1 = array_stuff_2();
     for _ in 2 .. 10 {
-        println!("{:?}", b[0]);
+        println!("{:?}", b1[0]);
     }
 
-    let (v,u) = vec_stuff();
-    for i in 0 .. v.len() {
-        println!("{:?}", v[i]);
+    let (v1,u1) = vec_stuff();
+    for i in 0 .. v1.len() {
+        println!("{:?}", v1[i]);
     }
     let f = |x: Vec<i32>| x.iter().fold(1, |a,b| a*b);
-    println!("PRODUCT = {}", f(v));
-    println!("PRODUCT = {}", f(u));
+    println!("PRODUCT = {}", f(v1));
+    println!("PRODUCT = {}", f(u1));
 
     let s: Vec<&str> = vec!["a man", "a plan", "a canal", "panama"];
     let t = vec_reverse_functional(s); // moves s to vec_stuff

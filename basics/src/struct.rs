@@ -36,24 +36,24 @@ fn mk_gsm(w: usize, h: usize) -> GSM {
 
 pub fn main() {
 
-    let w = 1024;
-    let h = 576;
+    let w1 = 1024;
+    let h1 = 576;
 
-    let a = mk_gsm(w,h);
-    let b = mk_gsm(w/2, h/2);
+    let a1 = mk_gsm(w1,h1);
+    let b1 = mk_gsm(w1/2, h1/2);
 
-    let v = vec![0;0];
-    let c = GSM { pixels: v, .. b };
+    let v1 = vec![0;0];
+    let c1 = GSM { pixels: v1, .. b1 };
 
     // move pixels from 'a' , not copied!
-    let d = GSM { pixels: a.pixels.clone(), .. a };
+    let d1 = GSM { pixels: a1.pixels.clone(), .. a1 };
 
-    println!("{}", a.pixels.len());
-    println!("{}", b.pixels.len());
-    println!("{}", c.pixels.len());
-    println!("{}", d.pixels.len());
+    println!("{}", a1.pixels.len());
+    println!("{}", b1.pixels.len());
+    println!("{}", c1.pixels.len());
+    println!("{}", d1.pixels.len());
 
-    let a = mk_p(1,2,3);
-    println!("{:?}", a);
-    println!("{:?}", a.1);
+    let a1 = mk_p(1,2,3);
+    println!("{:?}", a1);
+    println!("{:?}", a1.1);
 }
