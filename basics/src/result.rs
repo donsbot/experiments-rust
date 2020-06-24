@@ -52,7 +52,7 @@ pub fn main() {
     }
 
     match get_weather2() {
-        Ok(_) => std::process::exit(42),
+        Ok(_) => (), // std::process::exit(42),
         Err(MyError { problem }) => println!("{}", problem),
     };
 }

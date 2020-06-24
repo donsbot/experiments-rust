@@ -1,19 +1,21 @@
 use std::str::FromStr;
+use std::panic as std_panic;
 
-mod r#break;
 mod cast;
 mod collect;
 mod compare;
 mod copytypes;
-mod expr;
 mod expr2;
-mod r#f64;
+mod expr;
 mod foo;
 mod lib;
-mod modules;
 mod mod2;
+mod modules;
 mod ownership;
 mod panic;
+mod r#break;
+mod r#f64;
+mod r#struct;
 mod rc;
 mod result;
 mod sharing;
@@ -86,13 +88,21 @@ fn main() {
     println!("{}", lib::sum_f3(1000));
 
     ownership::main();
+
+    {
+        let r = std_panic::catch_unwind(|| {
+            panic::main(); // done
+        });
+        assert!(r.is_err());
+    }
+
     rc::main();
     result::main();
     sharing::main();
+    r#struct::main();
     types::main();
 
-    panic::main(); // done
-
+    println!("All done, thankyou.");
 }
 
 fn gcd(mut n: u64, mut m: u64) -> u64 {
