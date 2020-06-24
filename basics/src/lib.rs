@@ -6,7 +6,7 @@ pub fn sum_f1(n: u64) -> u64 {
 }
 
 fn f1_go(n:u64, acc:u64) -> u64 {
-    if n <= 0 {
+    if n == 0 {
         acc
     } else {
         f1_go(n-1, acc + n)
@@ -19,7 +19,7 @@ pub fn sum_f2(n: u64) -> u64 {
     let mut acc = 0;
     let mut m   = n;
     loop {
-        if m <= 0 {
+        if m == 0 {
             return acc;
         } else {
             acc += m;
