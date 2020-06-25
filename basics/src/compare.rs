@@ -27,10 +27,12 @@ pub fn main() {
     println!("{}",r(6));
 
     // arith sees through one level of indirection
-    assert_eq!(&r(6) + &1009, 1729); // fun
+    // assert_eq!(&r(6) + &1009, 1729); // fun
+    assert_eq!(r(6) + 1009, 1729); // fun
         // &1009 is an anonymous ref with scope of args of assert_eq
 }
 
 fn factorial(n: i128) -> i128 {
-    (1..n+1).fold(1, |a, b| a * b)
+    // (1..n+1).fold(1, |a, b| a * b)
+    (1..n+1).product()
 }

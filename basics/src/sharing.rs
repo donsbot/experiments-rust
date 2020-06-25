@@ -9,12 +9,14 @@ pub fn main() {
         let v: Vec<i32> = vec![4, 8, 19, 27, 34, 10];
         {
             let r = &v; // borrow
-            r[0]; // read for its effect?
+            let x = r[0]; // read for its effect?
+            println!("{}", x);
                   // drop r
         }
         let aside = v; // we can still use 'v', move v to aside
         let r = &aside;
-        r[0];
+        let x = r[0];
+        println!("{}", x);
     }
 
     // 2. more sharing
@@ -29,8 +31,8 @@ pub fn main() {
         extend_m(&mut a, &b);
         println!("{:?}", a);
 
-        fn extend_pure<'a>(vec: &Vec<f64>, slice: &[f64]) -> Vec<f64> {
-            let mut u = vec.clone();
+        fn extend_pure<'a>(vec: &[f64], slice: &[f64]) -> Vec<f64> {
+            let mut u = vec.to_owned();
             for e in slice {
                 u.push(*e);
             }

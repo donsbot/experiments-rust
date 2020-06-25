@@ -18,7 +18,7 @@ pub fn main() {
 }
 
 fn fix() -> ! {
-    loop {}
+    loop {panic!()}
 }
 
 fn pirate_share(total: u64, crew_size: usize) -> u64 {

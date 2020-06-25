@@ -7,6 +7,7 @@ const V_U8: u8 = b'*';
 const V_U16: u16 = 5u16;
 const V_U32: u32 = 0;
 const V_U64: u64 = 0;
+#[allow(clippy::inconsistent_digit_grouping)]
 const V_U128_1: u128 = 0b0011____0011_1101_0011_0011_11010011_0011_1101_0011_1101_0011_0011_11010011_0011_1101; 
 
 const V_ISIZE: isize = 137;

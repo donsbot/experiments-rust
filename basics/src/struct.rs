@@ -26,12 +26,10 @@ fn mk_p(a: usize, b: usize, c: usize) -> P {
 }
 
 fn mk_gsm(w: usize, h: usize) -> GSM {
-    let image = GSM {
+    GSM {
         pixels: vec![0; w*h],
         size: (w,h)
-    };
-    image
-
+    }
 }
 
 pub fn main() {

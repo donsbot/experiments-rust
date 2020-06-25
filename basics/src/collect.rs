@@ -17,7 +17,7 @@ fn show(t: &Table) { // ref to Table
 }
 
 fn sort_works(t: &mut Table) {
-    for (_,vs) in t {
+    for vs in t.values_mut() {
         vs.sort();
     }
 }
@@ -74,10 +74,9 @@ fn ref_2() {
 fn ref_3(b: bool) { // bottom of stack
     let x = 10; //  stack
     let y = 20; // stack
-    let mut r = &x; // mut ref to x (on stack)
 
     // assignment writes to the location of the referent. simple.
-    if b { r = &y; } // conditioal assign. r is now mut ref to y
+    let r = if b { &y } else { &x };
 
     assert!(*r == 10 || *r == 20);
 }

@@ -20,8 +20,8 @@ pub fn main() {
         println!("It's ok!");
     }
 
-    if !get_weather().is_err() {
-        println!("It's not an error!");
+    if get_weather().is_err() {
+        println!("It is an error!");
     }
 
     println!(
@@ -78,8 +78,9 @@ fn find(f: &dyn Fn(u8) -> bool, p: &[u8]) -> Option<u8> {
 }
 
 fn find_index(k: &dyn Fn(u8) -> bool, p: &[u8]) -> Option<usize> {
-    for n in 0..p.len() {
-        if k(p[n]) {
+    // for n in 0..p.len() {
+    for (n, i) in p.iter().enumerate() {
+        if k(*i) {
             return Some(n);
         }
     }

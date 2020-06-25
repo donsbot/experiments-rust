@@ -54,8 +54,9 @@ pub fn break_main() {
     // 5. passing references as arguments
     {
         // polymorphic in lifetime
+        #[allow(clippy::needless_lifetimes)]
         fn g<'a>(_p: &'a i32) {}
-        fn h<'a>(_p: &'static i32) {}
+        fn h(_p: &'static i32) {}
 
         let x = 10;
         g(&x);
@@ -67,6 +68,7 @@ pub fn break_main() {
     {
         // with a single ref in and return a single ref, assume same lifetime
         // fn smallest(v: &[i32]) -> &i32 {
+        #[allow(clippy::needless_lifetimes)]
         fn smallest<'a>(v: &'a [i32]) -> &'a i32 {
             let mut s = &v[0];
             for r in &v[1..] {
@@ -155,6 +157,7 @@ pub fn break_main() {
         let a = S { x: &10 , y: &20};
 
         // interesting type conversion through references
+        #[allow(clippy::needless_lifetimes)]
         fn sum_r_xy<'a, 'b, 'c>(r: &'a i32, s: S<'b, 'c>) -> i32 {
             r + s.x + s.y
         }

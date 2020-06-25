@@ -13,23 +13,17 @@ pub fn main() {
     // 1. declarations
     {
         let name: i64 = if 1 > 2 { 7 } else { 8 };
-        let name2;
-        if 1 > 2 {
-            name2 = 7;
-        } else {
-            name2 = 8;
-        }
+        let name2 = if 1 > 2 { 7 } else { 8 };
         assert_eq!(name, name2);
     }
 
     // 2 case analysis
     {
+        // interesting: blocks evaluate to ()
+        #[allow(clippy::if_same_then_else)]
         let _v = if true {
-            ()
         } else if 7 > 8 {
-            ()
         } else {
-            ()
         };
     }
 
@@ -108,6 +102,7 @@ pub fn main() {
     {
         let v = Some("foo");
 
+        #[allow(clippy::redundant_pattern_matching)]
         if let None = v {
             println!("WAT");
         } else {
@@ -172,16 +167,18 @@ pub fn main() {
 
         // interesting. loop lifetimes
         let bs = [1, 2, 3];
+        #[allow(clippy::never_loop)]
         'foo: for _ in &bs {
             break 'foo;
         }
 
         // return expressions (!)
         {
-            fn f0() -> () {
-                return; // value of ().
+            fn f0() {
+                // return; // value of ().
             }
             #[allow(unreachable_code)]
+            #[allow(clippy::diverging_sub_expression)]
             fn f1() -> usize {
                 let _v = return 2 * 128; // weird
                 0 /* dead code */
@@ -190,6 +187,7 @@ pub fn main() {
             println!("{:?}", f1());
 
             #[allow(unreachable_code)]
+            #[allow(clippy::diverging_sub_expression)]
             fn f2<'a>() -> &'a [u64] {
                 let _a: &[u64] = &[
                     1,
@@ -220,6 +218,7 @@ pub fn main() {
         fn fix() -> ! {
             loop {
                 //break; // can't break if it diverges
+                panic!();
             }
         }
         // let _v: Option<u64> = fix();
@@ -245,5 +244,5 @@ const FOO: u64 = /*return*/ 0xdeadbeef;
 
 #[allow(dead_code)]
 fn undefined() -> ! {
-    loop {}
+    loop {panic!()}
 }

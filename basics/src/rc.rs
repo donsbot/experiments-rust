@@ -16,7 +16,4 @@ pub fn main() {
     // can't be shared and mutable
     // s.push_str(" noodles");
 
-
-
-
 }
