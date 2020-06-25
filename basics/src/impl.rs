@@ -14,6 +14,10 @@ impl Q {
         self.old.is_empty() && self.new.is_empty()
     }
 
+    pub fn split(self) -> (Vec<char>, Vec<char>) {
+        (self.old , self.new)
+    }
+
     pub fn pop(&mut self) -> Option<char> {
         use std::mem::swap;
 
@@ -36,7 +40,7 @@ pub fn main() {
         old: Vec::new(),
         new: Vec::new(),
     };
-    q.push('a');
+    q.push('a'); // borrows a mutable ref to q
     q.push('b');
     println!("{:?}", q);
     let c = q.pop();
@@ -45,4 +49,9 @@ pub fn main() {
     println!("{:?}", c);
     let c = q.pop();
     println!("{:?}", c);
+
+    println!("{}", q.is_empty());
+
+    let (a,_) = q.split();
+    println!("{:?}", a);
 }
