@@ -2,15 +2,15 @@
 
 use std::fs::File;
 use std::mem::MaybeUninit;
-use std::mem;
+use std::cell::RefCell;
 
 #[derive(Debug)]
 pub struct Spider {
     species: String,
     web: bool,
     legs: [File;8],
+    err_count: RefCell<u32>,
 }
-
 
 fn mk_spider() -> Result<Spider,std::io::Error> {
 
@@ -26,7 +26,7 @@ fn mk_spider() -> Result<Spider,std::io::Error> {
         }
 
         // now convert
-        unsafe { mem::transmute::<_,[File;8]>(fs) }
+        unsafe { std::mem::transmute::<_,[File;8]>(fs) }
     };
 
     Ok(
@@ -34,6 +34,7 @@ fn mk_spider() -> Result<Spider,std::io::Error> {
             species: "scary".to_string(),
             web: false,
             legs: fs,
+            err_count: RefCell::new(0),
         }
     )
 }
