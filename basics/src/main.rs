@@ -55,8 +55,8 @@ fn main() {
     }
 
     let (v1,u1) = vec_stuff();
-    for i in 0 .. v1.len() {
-        println!("{:?}", v1[i]);
+    for i in &v1 {
+        println!("{:?}", *i);
     }
     let f = |x: Vec<i32>| x.iter().fold(1, |a,b| a*b);
     println!("PRODUCT = {}", f(v1));
