@@ -69,6 +69,44 @@ pub fn main() {
     assert_eq!(O::i32_to_maybe_o(1), Some(GT_));
 
     assert_ne!(A::Z,A::X);
-    assert_ne!(A::F(None),A::G { left: 0, right: 1})
+    assert_ne!(A::F(None),A::G { left: 0, right: 1});
+
+    let t1: Tree<u64> = empty();
+    let t2: Tree<u64> = single(42);
+
+    println!("{:?}, {:?}", t1, t2);
 
 }
+
+/* trees */
+#[derive(Debug,PartialEq)]
+enum Tree<T> {
+    Empty,
+    /* tag */
+    Full(Box<Node<T>>),
+    /* tag , ptr */
+}
+
+#[derive(Debug,PartialEq)]
+struct Node<T> {
+    element: T,
+    left: Tree<T>,
+    right: Tree<T>
+}
+
+use Tree::*;
+
+fn empty<T>() -> Tree<T> {
+    Empty
+}
+
+fn single<T>(e: T) -> Tree<T> {
+
+    let n = Box::new ( Node { element : e
+                 , left: Empty
+                 , right: Empty
+    } ) ;
+
+    Full(n)
+}
+
