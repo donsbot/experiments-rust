@@ -47,6 +47,17 @@ impl O {
 
 }
 
+#[derive(Debug,PartialEq)]
+enum A {
+    Z,
+    X,
+    F(Option<String>),
+    G {
+        left: u32,
+        right: u32
+    }
+}
+
 pub fn main() {
     println!("{:?}", O::compare_(7,32));
 
@@ -56,4 +67,8 @@ pub fn main() {
 
     assert_eq!(O::i32_to_maybe_o(42), None);
     assert_eq!(O::i32_to_maybe_o(1), Some(GT_));
+
+    assert_ne!(A::Z,A::X);
+    assert_ne!(A::F(None),A::G { left: 0, right: 1})
+
 }
