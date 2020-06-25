@@ -31,7 +31,7 @@ pub fn main() {
         extend_m(&mut a, &b);
         println!("{:?}", a);
 
-        fn extend_pure<'a>(vec: &[f64], slice: &[f64]) -> Vec<f64> {
+        fn extend_pure(vec: &[f64], slice: &[f64]) -> Vec<f64> {
             let mut u = vec.to_owned();
             for e in slice {
                 u.push(*e);

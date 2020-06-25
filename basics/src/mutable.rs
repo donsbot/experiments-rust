@@ -20,9 +20,9 @@ fn mk_spider() -> Result<Spider,std::io::Error> {
                 MaybeUninit::uninit().assume_init()
         };
 
-        for i in 0..8 {
+        for (i,p) in fs.iter_mut().enumerate() {
             let f = File::create(format!("/tmp/f-{}.txt", i))?;
-            fs[i] = MaybeUninit::new(f);
+            *p = MaybeUninit::new(f);
         }
 
         // now convert

@@ -13,8 +13,10 @@ const V_U128_1: u128 = 0b0011____0011_1101_0011_0011_11010011_0011_1101_0011_110
 const V_ISIZE: isize = 137;
 const V_USIZE: usize = 0xffff_fc00usize;
 
+#[allow(clippy::excessive_precision)]
 const V_F32: f32 = 3.1415926536897832;
-const V_F64: f64 = 3.1415926536897832;
+#[allow(clippy::excessive_precision)]
+const V_F64: f64 = 3.141_592_653_689_783_2;
 
 const V_TRUE: bool = true;
 const V_FALSE: bool = false;
@@ -41,7 +43,7 @@ struct TyTupStruct(i32, char);
 const V_TUP_STRUCT: TyTupStruct = TyTupStruct(42, 'f');
 
 // from https://doc.rust-lang.org/reference/items/constant-items.html
-const BIT1: u32 = 1 << 0;
+const BIT1: u32 = 1 << 3;
 const BIT2: u32 = 1 << 1;
 
 const BITS: [u32; 2] = [BIT1, BIT2];
@@ -225,7 +227,7 @@ pub fn main() {
     assert_eq!(2_u16.pow(4), 16);
     assert_eq!(u16::pow(2,4), 16);
 
-    println!("pi = {:?}", 3.14159265358979323846264338327950288_f64);
+    println!("pi = {:?}", std::f64::consts::PI); // 3.141_592_653_589_793_f64);
 
     let c = std::char::from_u32(V_U32 + 123456);
     println!("char = {:?}", c);

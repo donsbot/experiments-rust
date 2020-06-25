@@ -19,10 +19,9 @@ struct P<T> {
 fn find_e<'s>(slice: &'s [i32]) -> E/* lifetime omitted */ {
     let mut biggest: &'s i32 = &slice[0];
     let mut smallest: &'s i32 = &slice[0];
-    for i in 1 .. slice.len() {
-        let x = slice[i];
-        if x < *smallest { smallest = &slice[i]; }
-        if x > *biggest  { biggest  = &slice[i]; }
+    for p in slice.iter().skip(1) {
+        if *p < *smallest { smallest = p; }
+        if *p > *biggest  { biggest  = p; }
     }
     E { biggest, smallest } 
 }
@@ -57,21 +56,21 @@ pub fn is_empty_q<T>(q: &Q<T>) -> bool {
 
 // interesting bias towards mutable state
 pub fn main() {
-    let mut q: Q<u64> = Q::new();
-    let r: Q<u64> = new_q();
-    assert_eq!(is_empty_q(&r), true);
-    assert_eq!(is_empty_q(&q), true);
-    assert_eq!(q.is_empty(), true);
-    push_q(&mut q,42);
-    q.push(42);
-    assert_eq!(!q.is_empty(), true);
+    let mut q1: Q<u64> = Q::new();
+    let r1: Q<u64> = new_q();
+    assert_eq!(is_empty_q(&r1), true);
+    assert_eq!(is_empty_q(&q1), true);
+    assert_eq!(q1.is_empty(), true);
+    push_q(&mut q1,42);
+    q1.push(42);
+    assert_eq!(!q1.is_empty(), true);
 
     let a = [0, -3, 2, 1, 15, 100, 98];
     let e = find_e(&a);
     println!("{:?}", e);
 
     let a = P { x: 0., y: 0.};
-    let b = a.clone();
+    let b = a; // copy
     println!("{:?}", a);
     if a == b {
         println!("equal");

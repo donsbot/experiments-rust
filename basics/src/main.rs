@@ -58,7 +58,7 @@ fn main() {
     for i in &v1 {
         println!("{:?}", *i);
     }
-    let f = |x: Vec<i32>| x.iter().fold(1, |a,b| a*b);
+    let f = |x: Vec<i32>| x.iter().product::<i32>(); // fold(1, |a,b| a*b);
     println!("PRODUCT = {}", f(v1));
     println!("PRODUCT = {}", f(u1));
 
@@ -70,8 +70,8 @@ fn main() {
     }
 
     // foo module
-    let foo = foo::new_foo(43);
-    println!("Foo: {:?}", foo);
+    let f = foo::new_foo(43);
+    println!("Foo: {:?}", f);
 
     // break module
     r#break::break_main();
@@ -174,11 +174,11 @@ fn array_stuff_2() -> Box<[bool]> {
 }
 
 fn vec_stuff() -> (Vec<i32>, Vec<i32>) {
-    let v = vec![2, 3, 5, 7]; // via a macro
+    let v: Vec<i32> = vec![2, 3, 5, 7]; // via a macro
 
     let u: Vec<i32> = (1..6).collect();
 
-    assert_eq!(v.iter().fold(1, |a, b| a * b), 210);
+    assert_eq!(v.iter().product::<i32>(), 210); //fold(1, |a, b| a * b), 210);
     (u,v)
 }
 
