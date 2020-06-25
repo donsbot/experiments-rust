@@ -3,9 +3,27 @@ pub struct Q<T> {
     right: Vec<T>
 }
 
+// holds references with the lifetime 'e
+#[derive(Debug)]
+struct E<'e> {
+    biggest: &'e i32,
+    smallest: &'e i32
+}
+
+fn find_e<'s>(slice: &'s [i32]) -> E/* lifetime omitted */ {
+    let mut biggest: &'s i32 = &slice[0];
+    let mut smallest: &'s i32 = &slice[0];
+    for i in 1 .. slice.len() {
+        let x = slice[i];
+        if x < *smallest { smallest = &slice[i]; }
+        if x > *biggest  { biggest  = &slice[i]; }
+    }
+    E { biggest, smallest } 
+}
+
 // OO style
 impl<T> Q<T> {
-    pub fn new() -> Q<T> {
+    pub fn new() -> Self /* interesting */ {
         Q { left: Vec::new(), right: Vec::new() }
     }
 
@@ -41,5 +59,9 @@ pub fn main() {
     push_q(&mut q,42);
     q.push(42);
     assert_eq!(!q.is_empty(), true);
+
+    let a = [0, -3, 2, 1, 15, 100, 98];
+    let e = find_e(&a);
+    println!("{:?}", e);
 
 }
