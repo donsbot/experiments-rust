@@ -10,6 +10,12 @@ struct E<'e> {
     smallest: &'e i32
 }
 
+#[derive(Copy, Clone, Debug, PartialEq)]
+struct P<T> {
+    x: T,
+    y: T 
+}
+
 fn find_e<'s>(slice: &'s [i32]) -> E/* lifetime omitted */ {
     let mut biggest: &'s i32 = &slice[0];
     let mut smallest: &'s i32 = &slice[0];
@@ -63,5 +69,12 @@ pub fn main() {
     let a = [0, -3, 2, 1, 15, 100, 98];
     let e = find_e(&a);
     println!("{:?}", e);
+
+    let a = P { x: 0., y: 0.};
+    let b = a.clone();
+    println!("{:?}", a);
+    if a == b {
+        println!("equal");
+    }
 
 }
