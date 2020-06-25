@@ -13,6 +13,7 @@ mod r#impl2;
 mod lib;
 mod mod2;
 mod modules;
+mod mutable;
 mod ownership;
 mod panic;
 mod r#break;
@@ -85,6 +86,7 @@ fn main() {
     r#impl::main();
     r#impl2::main();
     modules::main();
+    mutable::main();
     mod2::main();
 
     println!("{}", lib::sum_f1(1000));
