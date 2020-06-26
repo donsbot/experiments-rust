@@ -10,6 +10,7 @@ mod r#enum2;
 mod expr2;
 mod expr;
 mod foo;
+mod generics;
 mod r#impl;
 mod r#impl2;
 mod lib;
@@ -87,6 +88,7 @@ fn main() {
     r#enum2::main();
     expr::main();
     expr2::main();
+    generics::main();
     r#f64::main();
     r#impl::main();
     r#impl2::main();
