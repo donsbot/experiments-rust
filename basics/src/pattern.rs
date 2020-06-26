@@ -60,9 +60,9 @@ pub fn main() {
             }
         }
 
-        #[allow(clippy::eq_op)]
         let v = 0 /* diverges: 1 */;
         println!("{}", match v {
+            #[allow(clippy::eq_op)]
             _ if true == true => "wat",
             _ if foo(v) == 0 => "yes",
             _ => "sigh",

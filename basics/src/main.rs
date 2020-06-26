@@ -6,6 +6,7 @@ mod collect;
 mod compare;
 mod copytypes;
 mod r#enum;
+mod r#enum2;
 mod expr2;
 mod expr;
 mod foo;
@@ -83,6 +84,7 @@ fn main() {
     compare::main();
     copytypes::main();
     r#enum::main();
+    r#enum2::main();
     expr::main();
     expr2::main();
     r#f64::main();
