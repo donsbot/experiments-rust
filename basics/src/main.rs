@@ -17,6 +17,7 @@ mod modules;
 mod mutable;
 mod ownership;
 mod panic;
+mod pattern;
 mod r#break;
 mod r#f64;
 mod r#struct;
@@ -103,6 +104,7 @@ fn main() {
         });
         assert!(r.is_err());
     }
+    pattern::main();
 
     rc::main();
     result::main();
