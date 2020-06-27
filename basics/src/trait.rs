@@ -59,10 +59,7 @@ fn pp_null<'a>() -> pretty::RcDoc<'a, ()> {
 
 fn pp_bool<'a>(v: bool) -> pretty::RcDoc<'a, ()> {
     pretty::RcDoc::text(
-        match v {
-            true => "true",
-            _ => "false"
-        }
+        if v { "true" } else { "false" }
     )
 }
 
@@ -77,7 +74,7 @@ fn pp_number<'a>(x: Rational64) -> pretty::RcDoc<'a, ()> {
 }
 
 // wrong
-fn pp_string<'a>(s: &'a String) -> pretty::RcDoc<'a, ()> {
+fn pp_string(s: &str) -> pretty::RcDoc<()> {
     pretty::RcDoc::text(s)
 }
 
