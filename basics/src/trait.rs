@@ -8,6 +8,7 @@ data JSValue
 extern crate num;
 extern crate pretty;
 
+use pretty::RcDoc as R;
 use num::rational::{Ratio,Rational64};
 
 #[derive(Debug,PartialEq)]
@@ -26,13 +27,11 @@ pub struct JSLabel(String);
 #[derive(Debug,PartialEq)]
 pub struct JSAssocVec(Vec<(JSLabel,JSValue)>);
 
-use self::JSValue as J;
-
 /* pretty printing */
 
 impl JSValue {
 
-    pub fn to_doc(&self) -> pretty::RcDoc<()> {
+    pub fn to_doc(&self) -> R<()> {
         match *self {
             /* oh! that compiled when i didn't think it would */
             // JSNull => pp_null(),
@@ -53,39 +52,42 @@ impl JSValue {
 
 }
 
-fn pp_null<'a>() -> pretty::RcDoc<'a, ()> {
-    pretty::RcDoc::text("null")
+fn pp_null<'a>() -> R<'a, ()> {
+    R::text("null")
 }
 
-fn pp_bool<'a>(v: bool) -> pretty::RcDoc<'a, ()> {
-    pretty::RcDoc::text(
+fn pp_bool<'a>(v: bool) -> R<'a, ()> {
+    R::text(
         if v { "true" } else { "false" }
     )
 }
 
-fn pp_number<'a>(x: Rational64) -> pretty::RcDoc<'a, ()> {
+fn pp_number<'a>(x: Rational64) -> R<'a, ()> {
     // denominator == 1
     if Ratio::is_integer(&x) {
-        pretty::RcDoc::text(format!("{}", x))
+        R::text(format!("{}", x))
     } else {
         panic!("can't format: {:?}", x)
     }
 
 }
 
-// wrong
-fn pp_string(s: &str) -> pretty::RcDoc<()> {
-    pretty::RcDoc::text(s)
+fn pp_string<'a>(s: &'a String) -> R<'a,()> {
+	let ts: Vec<R<()>> =
+			 s.chars()
+			  .map(|c| pp_char(c))
+              .collect();
+    double_quotes(R::concat(ts))
 }
 
+fn pp_char<'a> (c: char) -> R<'a,()> {
+	match c {
+		'\\' => R::text("\\\\"),
+		'"'  => R::text(r#"\\""#),
+		_   =>  R::text(c.to_string())
+	}
+}
 /*
-pp_array         :: [JSValue] -> Doc
-pp_array xs       = brackets $ fsep $ punctuate comma $ map pp_value xs
-*/
-
-/*
-pp_string        :: String -> Doc
-pp_string x       = doubleQuotes $ hcat $ map pp_char x
   where pp_char '\\'            = text "\\\\"
         pp_char '"'             = text "\\\""
         pp_char c | isControl c = uni_esc c
@@ -98,13 +100,33 @@ pp_string x       = doubleQuotes $ hcat $ map pp_char x
           where len = length cs
 */
 
+const DOUBLE_QUOTE: &str = &r#"""#;
+
+fn double_quotes(d : R<()>) -> R<()> {
+	R::text(DOUBLE_QUOTE)
+		.append(d)
+		.append(R::text(DOUBLE_QUOTE))
+}
+
 /*
+List(ref xs) =>
+                RcDoc::text("(")
+                    .append(RcDoc::intersperse(xs.into_iter().map(|x| x.to_doc()), Doc::line()).nest(1).group())
+                    .append(RcDoc::text(")"))
+*/
+
+/*
+pp_array         :: [JSValue] -> Doc
+pp_array xs       = brackets $ fsep $ punctuate comma $ map pp_value xs
+
 pp_value v        = case v of
     JSArray vs   -> pp_array vs
     JSObject xs  -> pp_js_object xs
 */
 
 /* test */
+
+use self::JSValue as J;
 
 pub fn main() {
     assert_eq!("null", J::JSNull.to_pretty(80));
@@ -114,5 +136,6 @@ pub fn main() {
     let n = Ratio::from_integer(12);
     assert_eq!("12", J::JSRational(n).to_pretty(80));
 
-    assert_eq!("foo", J::JSString("foo".to_string()).to_pretty(80));
+    assert_eq!(r#""foo""#, J::JSString("foo".to_string()).to_pretty(80));
+    assert_eq!(r#""f\\"oo""#, J::JSString(r#"f"oo"#.to_string()).to_pretty(80));
 }
