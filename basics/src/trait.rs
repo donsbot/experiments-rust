@@ -72,10 +72,10 @@ fn pp_number<'a>(x: Rational64) -> R<'a, ()> {
 
 }
 
-fn pp_string<'a>(s: &'a String) -> R<'a,()> {
+fn pp_string<'a>(s: &str) -> R<'a,()> {
 	let ts: Vec<R<()>> =
 			 s.chars()
-			  .map(|c| pp_char(c))
+			  .map(pp_char)
               .collect();
     double_quotes(R::concat(ts))
 }
