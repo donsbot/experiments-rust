@@ -42,7 +42,7 @@ impl JSValue {
 
 }
             
-fn pp_value<'a>(v: &'a JSValue) -> R<'a, ()> {
+fn pp_value(v: &JSValue) -> R<()> {
 	match *v {
 		J::JSNull => pp_null(),
 		J::JSBool(b) => pp_bool(b),
@@ -92,7 +92,7 @@ fn pp_char<'a> (c: char) -> R<'a,()> {
 	}
 }
 
-fn pp_array(vs: &Vec<JSValue>) -> R<()> {
+fn pp_array(vs: &[JSValue]) -> R<()> {
 
 	let ts: Vec<R<()>> =
 				vs.iter()
