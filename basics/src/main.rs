@@ -22,10 +22,11 @@ mod panic;
 mod pattern;
 mod r#break;
 mod r#f64;
-mod r#struct;
 mod rc;
 mod result;
 mod sharing;
+mod r#struct;
+mod r#trait;
 mod types;
 
 fn main() {
@@ -114,6 +115,7 @@ fn main() {
     result::main();
     sharing::main();
     r#struct::main();
+    r#trait::main();
     types::main();
 
     println!("All done, thankyou.");
