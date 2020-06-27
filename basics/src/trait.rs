@@ -1,7 +1,6 @@
 // barebones 2008-era JSON pretty printer
 /*
 data JSValue
-    | JSArray    [JSValue]
     | JSObject   (JSObject JSValue)
 */
 
@@ -17,8 +16,8 @@ pub enum JSValue {
     , JSBool(bool)
     , JSRational(Rational64)
     , JSString(String)
+    , JSArray(Vec<JSValue>)
 }
-//    , JSArray(Vec<JSValue>)
 //    , JSObject(JSAssocVec)
 
 #[derive(Debug,PartialEq)]
@@ -32,16 +31,7 @@ pub struct JSAssocVec(Vec<(JSLabel,JSValue)>);
 impl JSValue {
 
     pub fn to_doc(&self) -> R<()> {
-        match *self {
-            /* oh! that compiled when i didn't think it would */
-            // JSNull => pp_null(),
-            
-            Self::JSNull => pp_null(),
-            Self::JSBool(b) => pp_bool(b),
-            Self::JSRational(r) => pp_number(r),
-            Self::JSString(ref s) => pp_string(s),
-
-        }
+		pp_value(self)
     }
 
     pub fn to_pretty(&self, width: usize) -> String {
@@ -50,6 +40,16 @@ impl JSValue {
         String::from_utf8(w).unwrap()
     }
 
+}
+            
+fn pp_value<'a>(v: &'a JSValue) -> R<'a, ()> {
+	match *v {
+		J::JSNull => pp_null(),
+		J::JSBool(b) => pp_bool(b),
+		J::JSRational(r) => pp_number(r),
+		J::JSString(ref s) => pp_string(s),
+		J::JSArray(ref v) => pp_array(v),
+	}
 }
 
 fn pp_null<'a>() -> R<'a, ()> {
@@ -92,12 +92,32 @@ fn pp_char<'a> (c: char) -> R<'a,()> {
 	}
 }
 
-const DOUBLE_QUOTE: &str = &r#"""#;
+fn pp_array(vs: &Vec<JSValue>) -> R<()> {
+
+	let ts: Vec<R<()>> =
+				vs.iter()
+			   .map(pp_value)
+               .collect();
+	brackets(	
+		R::intersperse(ts,R::text(COMMA))
+	)
+}
+
+const DOUBLE_QUOTE : &str = &r#"""#;
+const LEFT_BRACKET : &str = &r#"["#;
+const RIGHT_BRACKET: &str = &r#"]"#;
+const COMMA        : &str = &r#","#;
 
 fn double_quotes(d : R<()>) -> R<()> {
 	R::text(DOUBLE_QUOTE)
 		.append(d)
 		.append(R::text(DOUBLE_QUOTE))
+}
+
+fn brackets(d : R<()>) -> R<()> {
+	R::text(LEFT_BRACKET)
+		.append(d)
+		.append(R::text(RIGHT_BRACKET))
 }
 
 /*
@@ -108,8 +128,6 @@ List(ref xs) =>
 */
 
 /*
-pp_array         :: [JSValue] -> Doc
-pp_array xs       = brackets $ fsep $ punctuate comma $ map pp_value xs
 
 pp_value v        = case v of
     JSArray vs   -> pp_array vs
@@ -131,4 +149,7 @@ pub fn main() {
     assert_eq!(r#""foo""#, J::JSString("foo".to_string()).to_pretty(80));
     assert_eq!(r#""f\\"oo""#, J::JSString(r#"f"oo"#.to_string()).to_pretty(80));
     assert_eq!(r#""f❤o\u{9c}""#, J::JSString(r#"f❤o"#.to_string()).to_pretty(80));
+
+	let v = J::JSArray(vec![J::JSNull,J::JSBool(true),J::JSBool(false)]);
+    assert_eq!("[null,true,false]", v.to_pretty(80));
 }
