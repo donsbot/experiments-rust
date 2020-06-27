@@ -59,8 +59,9 @@ fn pp_number<'a>(x: Rational64) -> R<'a, ()> {
     // denominator == 1
     if Ratio::is_integer(&x) {
         R::text(format!("{}", x))
-    } else {
-        panic!("can't format: {:?}", x)
+    } else { /* hack */
+		let y:f64 = *Ratio::numer(&x) as f64 / *Ratio::denom(&x) as f64;
+        R::text(format!("{}", y))
     }
 }
 
@@ -132,6 +133,9 @@ pub fn main() {
 
     let n = Ratio::from_integer(12);
     assert_eq!("12", J::JSRational(n).to_pretty(80));
+
+    let n = Ratio::new_raw(1, 2);
+    assert_eq!("0.5", J::JSRational(n).to_pretty(80));
 
     assert_eq!(r#""foo""#, J::JSString("foo".to_string()).to_pretty(80));
     assert_eq!(
