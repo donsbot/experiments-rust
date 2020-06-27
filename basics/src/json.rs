@@ -87,12 +87,12 @@ fn pp_array(vs: &[JSValue]) -> R<()> {
     brackets(R::intersperse(ts, R::text(COMMA)))
 }
 
-fn pp_object<'a>(vs: &'a Vec<(JSLabel, JSValue)>) -> R<'a, ()> {
+fn pp_object(vs: &[(JSLabel, JSValue)]) -> R<()> {
     let ts: Vec<R<()>> = vs.iter().map(pp_field).collect();
     braces(R::intersperse(ts, R::text(COMMA)))
 }
 
-fn pp_field<'a>((JSLabel(k), v): &'a (JSLabel, JSValue)) -> R<'a, ()> {
+fn pp_field((JSLabel(k), v): &(JSLabel, JSValue)) -> R<()> {
     pp_string(k)
         .append(R::text(":"))
         .append(R::space())
