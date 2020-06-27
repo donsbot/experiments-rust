@@ -13,6 +13,7 @@ mod foo;
 mod generics;
 mod r#impl;
 mod r#impl2;
+mod r#json;
 mod lib;
 mod mod2;
 mod modules;
@@ -26,7 +27,6 @@ mod rc;
 mod result;
 mod sharing;
 mod r#struct;
-mod r#trait;
 mod types;
 
 fn main() {
@@ -93,6 +93,7 @@ fn main() {
     r#f64::main();
     r#impl::main();
     r#impl2::main();
+    r#json::main();
     modules::main();
     mutable::main();
     mod2::main();
@@ -115,7 +116,6 @@ fn main() {
     result::main();
     sharing::main();
     r#struct::main();
-    r#trait::main();
     types::main();
 
     println!("All done, thankyou.");
