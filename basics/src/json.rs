@@ -1,4 +1,9 @@
+//
 // barebones 2008-era JSON pretty printer
+// Rough port of 
+// https://github.com/GaloisInc/json/blob/master/Text/JSON/Pretty.hs
+// https://github.com/GaloisInc/json/blob/master/Text/JSON/Types.hs
+//
 
 extern crate num;
 extern crate pretty;
@@ -6,9 +11,7 @@ extern crate pretty;
 use num::rational::{Ratio, Rational64};
 use pretty::RcDoc as R;
 
-//
 // type of JSON values
-//
 #[derive(Debug, PartialEq)]
 pub enum JSValue {
     JSNull,
