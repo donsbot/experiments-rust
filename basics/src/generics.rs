@@ -36,7 +36,9 @@ pub fn ex1() {
     let _w: &mut dyn Write = &mut buf;
 }
 
-pub fn elem<T: PartialEq>(vec:&[T], x: T) -> bool {
+pub fn elem<P>(vec:&[P], x: P) -> bool
+    where P : PartialEq
+{
     for i in vec {
         if *i == x {
             return true
