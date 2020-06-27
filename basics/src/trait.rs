@@ -72,7 +72,7 @@ fn pp_number<'a>(x: Rational64) -> R<'a, ()> {
 
 }
 
-fn pp_string<'a>(s: &str) -> R<'a,()> {
+fn pp_string(s: &str) -> R<()> {
 	let ts: Vec<R<()>> =
 			 s.chars()
 			  .map(pp_char)
@@ -84,21 +84,13 @@ fn pp_char<'a> (c: char) -> R<'a,()> {
 	match c {
 		'\\' => R::text("\\\\"),
 		'"'  => R::text(r#"\\""#),
-		_   =>  R::text(c.to_string())
+		c if c.is_control() => {
+				let s : String = c.escape_unicode().collect();
+				R::text(s)
+ 		},
+		_    => R::text(c.to_string())
 	}
 }
-/*
-  where pp_char '\\'            = text "\\\\"
-        pp_char '"'             = text "\\\""
-        pp_char c | isControl c = uni_esc c
-        pp_char c               = char c
-
-        uni_esc c = text "\\u" <> text (pad 4 (showHex (fromEnum c) ""))
-
-        pad n cs  | len < n   = replicate (n-len) '0' ++ cs
-                  | otherwise = cs
-          where len = length cs
-*/
 
 const DOUBLE_QUOTE: &str = &r#"""#;
 
@@ -138,4 +130,5 @@ pub fn main() {
 
     assert_eq!(r#""foo""#, J::JSString("foo".to_string()).to_pretty(80));
     assert_eq!(r#""f\\"oo""#, J::JSString(r#"f"oo"#.to_string()).to_pretty(80));
+    assert_eq!(r#""f❤o\u{9c}""#, J::JSString(r#"f❤o"#.to_string()).to_pretty(80));
 }
