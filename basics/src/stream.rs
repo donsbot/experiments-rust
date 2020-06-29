@@ -7,16 +7,15 @@ enum Step<S,A> {
     Done,
 }
 
-// need to hide S
+// data Stream a = forall s. Stream (s -> (Step s a)) s
 struct Stream<'a, S, A> {
     f: &'a (dyn FnOnce(S) -> Step<S,A>),
     s: S
 }
 
-// unit state
 fn empty<'a,A>() -> Stream<'a,(),A> {
     Stream {
-        f: &(|()| Step::Done),
+        f: &(|_| Step::Done),
         s: ()
     }
 }
@@ -48,7 +47,6 @@ fn singleton_helper<'a, A>(b:bool, x:A) -> Step<bool,A> {
 // }
 
 /*
-data Stream m a = forall s. Stream (s -> m (Step s a)) s
 
 -- | Check if a 'Stream' is empty
 null :: Monad m => Stream m a -> m Bool
@@ -64,4 +62,7 @@ null (Stream step t) = null_loop t
 */
 
 pub fn main() {
+
+    let s1: Stream<(),char> = empty();
+
 }
