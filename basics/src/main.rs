@@ -27,6 +27,7 @@ mod rc;
 mod result;
 mod sharing;
 mod r#struct;
+mod r#trait;
 mod types;
 
 fn main() {
@@ -116,6 +117,7 @@ fn main() {
     result::main();
     sharing::main();
     r#struct::main();
+    r#trait::main();
     types::main();
 
     println!("All done, thankyou.");
