@@ -35,4 +35,21 @@ pub fn main() {
     println!("{}",V::is_good(&0i16));
     println!("{}",V::is_good(&1i64));
     println!("{}",V::is_good(&0i128));
+
+    /* examples of method call syntax */
+    let v: i64 = 7;
+
+    // "qualified method calls "
+    if     v.is_good()     // OO method call
+        && i64::is_good(&v) // type-based dispatch?
+        && V::is_good(&v)  // trait function call
+        && <i64 as V>::is_good(&v)  // type/trait dispatch, fully qualified
+    {
+        println!("this is a good one");
+    } else {
+        panic!("much badness");
+    }
+
+
+
 }
