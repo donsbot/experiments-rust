@@ -40,6 +40,12 @@ impl<T> AddAssign for Complex<T> where T: AddAssign<T>
 }
 
 // equality
+impl<T: PartialEq> PartialEq for Complex<T> {
+    fn eq(&self, other: &Complex<T>) -> bool {
+        self.re == other.re && self.im == other.im
+    }
+    /* use default ne */
+}
 
 /* test */
 pub fn main() {
