@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use std::panic as std_panic;
 
+mod bounds;
 mod cast;
 mod collect;
 mod compare;
@@ -82,6 +83,7 @@ fn main() {
     // break module
     r#break::break_main();
 
+    bounds::main();
     cast::cast_main();
     collect::main();
     compare::main();

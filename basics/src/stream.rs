@@ -9,7 +9,7 @@ enum Step<S,A> {
 
 // data Stream a = forall s. Stream (s -> (Step s a)) s
 struct Stream<'a, S, A> {
-    f: &'a (dyn FnOnce(S) -> Step<S,A>),
+    f: &(dyn FnOnce(S) -> Step<S,A>),
     s: S
 }
 
@@ -21,19 +21,25 @@ fn empty<'a,A>() -> Stream<'a,(),A> {
 }
 
 /*
+fn const_<A,B>(a: A,_ : B) -> A {
+     a
+}
+*/
+
+/*
  * can't get this to capture 'x' correctly yet
-fn singleton<'a, A>(x: A) -> Stream<'a,bool,A> {
+ */
+fn singleton<'a, A>(x: &A) -> Stream<'a,bool,&A> {
 
     Stream {
-        f: &|b| { singleton_helper(b, x) },
+        f: |b| { singleton_helper(b, x) },
         s: true
     }
 
 }
-*/
 
 //  fn step<A>(b: bool) -> Step<bool,A> {
-fn singleton_helper<'a, A>(b:bool, x:A) -> Step<bool,A> {
+fn singleton_helper<'a, A>(b:bool, x :&A) -> Step<bool,&A> {
     if b {
         Step::Yield(x , false)
     } else {
@@ -41,10 +47,6 @@ fn singleton_helper<'a, A>(b:bool, x:A) -> Step<bool,A> {
     }
 }
 
-
-// fn const_<A,B>(a: A,_ : B) -> A {
-//     a
-// }
 
 /*
 
