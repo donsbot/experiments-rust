@@ -19,6 +19,7 @@ mod lib;
 mod mod2;
 mod modules;
 mod mutable;
+mod operators;
 mod ownership;
 mod panic;
 mod pattern;
@@ -105,6 +106,7 @@ fn main() {
     println!("{}", lib::sum_f2(1000));
     println!("{}", lib::sum_f3(1000));
 
+    operators::main();
     ownership::main();
 
     {
