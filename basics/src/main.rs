@@ -29,6 +29,7 @@ mod r#f64;
 mod rc;
 mod result;
 mod sharing;
+mod stream;
 mod r#struct;
 mod r#trait;
 mod types;
@@ -123,6 +124,7 @@ fn main() {
     result::main();
     sharing::main();
     r#struct::main();
+    stream::main();
     r#trait::main();
     types::main();
 

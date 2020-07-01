@@ -51,7 +51,6 @@ pub fn main() {
     let s1: Stream<(),char> = empty();
     let s2: Stream<bool,i64> = singleton(&42);
 
-    println!("{}", null(s1));
-    println!("{}", null(s2));
-
+    assert_eq!(true, null(s1));
+    assert_eq!(false, null(s2));
 }
