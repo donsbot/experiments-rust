@@ -3,6 +3,7 @@ use std::panic as std_panic;
 
 mod bounds;
 mod cast;
+mod closures;
 mod collect;
 mod compare;
 mod copytypes;
@@ -86,6 +87,7 @@ fn main() {
 
     bounds::main();
     cast::cast_main();
+    closures::main();
     collect::main();
     compare::main();
     copytypes::main();

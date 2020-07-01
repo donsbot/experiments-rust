@@ -21,8 +21,8 @@ fn b_descending(c: &S) -> i64 {
     -c.b
 }
 
-fn sort_s_pure(c: &Vec<S>) -> Vec<S> {
-    let mut d = c.clone();
+fn sort_s_pure(c: &[S]) -> Vec<S> {
+    let mut d = c.to_owned(); // own a new d from borrowed c
     d.sort_by_key(b_descending);
     d
 }
