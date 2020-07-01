@@ -8,6 +8,8 @@ pub fn main() {
     let b = sort_s_pure(&a);
     println!("{:?}", a);
     println!("{:?}", b);
+
+    start_sorting_thread(b, 42);
 }
 
 #[derive(Clone,PartialEq,Debug,Eq,Ord,PartialOrd)]
@@ -22,4 +24,18 @@ fn sort_s_pure(c: &[S]) -> Vec<S> {
     let x = 2; // to be captured
     d.sort_by_key(|c| {-c.b + x} );
     d
+}
+
+use std::thread;
+
+fn start_sorting_thread(mut cs: Vec<S>, x: i64) -> thread::JoinHandle<Vec<S>> {
+
+    // move 'x' the lambda
+    let ky_fn = move |c: &S| -> i64 { -c.b  + x } ;
+
+    thread::spawn(move || {
+        cs.sort_by_key(ky_fn);
+        cs
+    })
+
 }
