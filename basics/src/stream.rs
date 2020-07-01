@@ -37,7 +37,7 @@ fn empty<'a,A>() -> Stream<'a, (), A> {
 }
 
 // A stream with a single element
-fn singleton<'a, A>(a: &'a A) -> Stream<'a, bool, A> {
+fn singleton<A>(a: &A) -> Stream<bool, A> {
 
     let step = move |b: &bool| {
         if *b {
