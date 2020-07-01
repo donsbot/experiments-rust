@@ -1,11 +1,14 @@
 // 
-// example of how to do stream fusion types in Rust
+// Example of how to do stream fusion iterators in Rust
+//
+// Todo: put in impl, use good syntax
+// Hide the state parameter
 //
 
 // Result of taking a single step in a stream
 enum Step<'a,S,A> {
     Yield(&'a A, S),
-    Skip(S),
+    Skip(S), // unboxed states only please
     Done,
 }
 
@@ -111,16 +114,6 @@ fn replicate<A>(n: usize, a: &A) -> Stream<usize,A> {
     }
 }
 
-/*
-replicateM :: Monad m => Int -> m a -> Stream m a
-{-# INLINE_FUSED replicateM #-}
-replicateM n p = Stream step n
-  where
-    {-# INLINE_INNER step #-}
-    step i | i <= 0    = return Done
-           | otherwise = do { x <- p; return $ Yield x (i-1) }
-*/
-
 // First element of the 'Stream' or None if empty
 // head :: Monad m => Stream m a -> m a
 fn head<'a,A,S: Copy>(s: &Stream<'a,S,A>) -> Option<&'a A> {
@@ -164,12 +157,39 @@ fn last<'a,A,S: Copy>(s: &Stream<'a,S,A>) -> Option<&'a A> {
 }
 
 
+// The first @n@ elements of a stream
+// take :: Monad m => Int -> Stream m a -> Stream m a
+fn take<'a, A,S: Copy>(n: usize, s: &'a Stream<S,A>) -> Stream<'a,(S,usize),A> {
+
+    let step1 = move |(s0,i)| {
+        if i < n {
+            let r = (s.next)(s0); // run the first stream
+            match r {
+                Step::Yield(x,s1) => { Step::Yield(x,(s1,i+1)) }
+                Step::Skip(s1)    => { Step::Skip((s1,i)) }
+                Step::Done => { Step::Done }
+            }
+        } else {
+            Step::Done
+        }
+    };
+
+    Stream {
+        next: Box::new(step1),
+        state: (s.state, 0)
+    }
+}
+
 /* basic tests */
 pub fn main() {
 
     let s1: Stream<(),char> = empty();
     let s2: Stream<bool,i64> = singleton(&42);
     let s3: Stream<usize,i64> = replicate(10,&0);
+    let s4: Stream<usize,i64> = replicate(3,&1);
+    let s5 = take(0,&s4);
+    assert_eq!(true,null(&s5));
+    assert_eq!(false, null(&take(2,&s4)));
 
     assert_eq!(true, null(&s1));
     assert_eq!(false, null(&s2));
