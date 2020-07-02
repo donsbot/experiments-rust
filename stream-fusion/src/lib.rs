@@ -320,4 +320,11 @@ mod tests {
         let s2 = cons(3, cons(4, cons(6, empty())));
         assert_eq!(3, length(&s2));
     }
+
+    #[test]
+    fn test_perf_lazy() { // should be fast
+        let lim = 10000000;
+        let s1 = replicate(lim, 0);
+        assert_eq!(1, length(&take(1,&s1)));
+    }
 }
