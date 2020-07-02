@@ -62,7 +62,7 @@ pub fn empty_f<'s, A: Copy>() -> Stream<'s, impl Seed, A> {
 }
 
 // A stream with a single element
-pub fn singleton<'s, A: 's + Copy>(a: A) -> Stream<'s, bool, A> {
+pub fn singleton<'s, A: 's + Copy>(a: A) -> Stream<'s, impl Seed, A> {
     let step = move |b: bool| {
         if b {
             Step::Yield(a, false)
@@ -77,10 +77,11 @@ pub fn singleton<'s, A: 's + Copy>(a: A) -> Stream<'s, bool, A> {
 }
 
 // Concatenate two streams
-pub fn append<'s, S: Seed + Copy + 's, T: Seed + Copy + 's, A: Copy + 's>(
+pub fn append<'s, A: Copy + 's, S: Seed + 's, T: Seed + 's>(
     l: Stream<'s, S, A>,
     r: Stream<'s, T, A>,
-) -> Stream<'s, impl Seed, A> {
+) -> Stream<'s, impl Seed, A>
+{
     let x = l.seed;
     let step = move |a: Either<S, T>| match a {
         Left(sa) => {
@@ -108,7 +109,7 @@ pub fn append<'s, S: Seed + Copy + 's, T: Seed + Copy + 's, A: Copy + 's>(
 }
 
 // Yield a 'Stream' of values obtained by running the generator a given number of times
-pub fn replicate<'s, A: 's + Copy>(n: usize, a: A) -> Stream<'s, usize, A> {
+pub fn replicate<'s, A: 's + Copy>(n: usize, a: A) -> Stream<'s, impl Seed, A> {
     let step = move |i: usize| {
         if i == 0 {
             Step::Done
@@ -144,12 +145,12 @@ pub fn foldl<'s, A: 's + Copy, B: 's + Copy>(
 }
 
 // Length of a stream
-pub fn length<S: Copy, A: Copy>(s: &Stream<impl Seed, A>) -> usize {
+pub fn length<A: Copy>(s: &Stream<impl Seed, A>) -> usize {
     foldl(|n, _| n + 1, 0, s)
 }
 
 // Map a function over a 'Stream'
-pub fn map<'s, A: 's + Copy, B: 's + Copy, S: 's + Copy>(
+pub fn map<'s, A: 's + Copy, B: 's + Copy>(
     f: fn(A) -> B,
     s: Stream<'s, impl Seed +'s, A>,
 ) -> Stream<'s, impl Seed, B> {
