@@ -38,7 +38,6 @@ impl<A> Stream<A> for Empty {
     fn start(&self) -> Self::Seed {
         Empty::Empty
     }
-
 }
 
 fn empty<T>() -> impl Stream<T,Seed=Empty> {
@@ -47,5 +46,5 @@ fn empty<T>() -> impl Stream<T,Seed=Empty> {
 
 pub fn main() {
     let s: &dyn Stream<i64,Seed=Empty> = &empty();
-    assert_eq!(true, Stream::is_empty(s));
+    assert_eq!(true, s.is_empty());
 }
