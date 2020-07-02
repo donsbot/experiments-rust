@@ -250,7 +250,7 @@ mod tests {
     #[test]
     fn test_empty_m() {
         let s1: Stream<_, i64> = empty_f();
-        assert_eq!(true, s1.is_empty());
+        assert_eq!(true, is_empty(&s1));
     }
 
     /* functional calls */
