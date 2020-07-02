@@ -70,10 +70,11 @@ pub fn singleton<A>(a: &A) -> Stream<bool, A> {
 // Concatenate two streams
 // (++) :: Monad m => Stream m a -> Stream m a -> Stream m a
 //
-pub fn append<'s, 'a, S:Copy, T:Copy, A>
-    ( l : &'s Stream<'s,'a,S,A>
+pub fn append<'s, 'a, S:Copy + 's, T:Copy, A>
+    ( l : Stream<'s,'a,S,A>
     , r : &'s Stream<'s,'a,T,A>) -> Stream<'s, 'a, Either<S,T>, A>
 {
+    let x = l.seed.clone();
     let step = move |a: Either<S,T>| {
         match a {
             Left(sa) => {
@@ -97,7 +98,7 @@ pub fn append<'s, 'a, S:Copy, T:Copy, A>
 
     Stream {
         next: Box::new(step),
-        seed: Left(l.seed)
+        seed: Left(x)
     }
 }
 
@@ -189,50 +190,83 @@ pub fn take<'s, 'a, A, S: Copy>(n: usize, s: &'s Stream<'s, 'a, S, A>) ->
     }
 }
 
-
-// -- | Left fold non-empty with a accumulator
-// foldl1 :: Monad m => (a -> a -> a) -> Stream m a -> m a
 /*
-fn foldl1(f : fn(A, B) -> A,
-         a : A,
-         s : Stream<'a,S,B>) -> Option<A>
+ * need trait or hiding for state 
+ */
+pub fn cons<'s,'a,A,S:Copy>
+    ( a: &'a A
+    , s: &'s Stream<'s, 'a, S, A>) -> Stream<'s, 'a, Either<bool,S>, A>
 {
+    let s1 = singleton(a);
+    append(s1, s) // consumes
 }
-*/
 
+pub fn length<S:Copy,A>(s : &Stream<S, A>) -> usize {
+    foldl(|n,_| { n+1 } , 0, s)
+}
 
-/*
-{-# INLINE_FUSED foldlM' #-}
-foldlM' m w (Stream step t) = foldlM'_loop SPEC w t
-  where
-    foldlM'_loop !_ z s
-      = z `seq`
-        do
-          r <- step s
-          case r of
-            Yield x s' -> do { z' <- m z x; foldlM'_loop SPEC z' s' }
-            Skip    s' -> foldlM'_loop SPEC z s'
-            Done       -> return z
-*/
+// Left fold with a strict accumulator and a monadic operator
+// foldlM' :: Monad m => (a -> b -> m a) -> a -> Stream m b -> m a
+//
+pub fn foldl<'s, 'a, B, A, S: Copy>
+            (f: fn(B,&A) -> B,
+             w: B,
+             s: &Stream<'s, 'a, S, A> 
+             ) -> B
+{
+    let mut st = s.seed;
+    let mut z  = w;
+    loop {
+        let r = (s.next)(st);
+        match r { 
+            Step::Yield(x,s1) => { z = f(z,x); st = s1 } 
+            Step::Skip(s1) => { st = s1 }
+            Step::Done => { return z }
+        }
+    }
+}
 
 
 /* basic tests */
 mod tests {
+
+    #[test]
+    fn test_cons() {
+        let s1 = super::replicate(10, &'x');
+        let s2 = super::cons(&'x', &s1);
+        assert_eq!(11,super::length(&s2));
+    }
+
+    #[test]
+    fn test_length() {
+        let s1 = super::replicate(10, &'x');
+        let s2 = super::replicate(10, &'x');
+        assert_eq!(20,super::length(&super::append(s1,&s2)));
+    }
+
+    #[test]
+    fn test_foldl() {
+        let s1 = super::replicate(10, &'x');
+        assert_eq!(10,super::foldl( |b,_| { b + 1 } 
+                               , 0usize
+                               , &s1));
+    }
+
     #[test]
     fn test_append() {
-        let s1: super::Stream<(), char> = super::empty();
-        let s2: super::Stream<usize, char> = super::replicate(10, &'x');
-        let s3: super::Stream<either::Either<(),usize>, char> = super::append(&s1,&s2);
+        let s1 = super::empty();
+        let s2 = super::replicate(10, &'x');
+        let s3 = super::append(s1,&s2);
         assert_eq!(super::null(&s3), false);
     }
 
 
     #[test]
     fn test_0() {
-        let s1: super::Stream<(), char> = super::empty();
-        let s2: super::Stream<bool, i64> = super::singleton(&42);
-        let s3: super::Stream<usize, i64> = super::replicate(10, &0);
-        let s4: super::Stream<usize, i64> = super::replicate(3, &1);
+        let s1: super::Stream<_,i64> = super::empty();
+        let s2 = super::singleton(&42);
+        let s3 = super::replicate(10, &0);
+        let s4 = super::replicate(3, &1);
         let s5 = super::take(0, &s4);
         assert_eq!(true, super::null(&s5));
         assert_eq!(false, super::null(&super::take(2, &s4)));
