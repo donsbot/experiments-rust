@@ -74,7 +74,7 @@ pub fn append<'s, 'a, S:Copy + 's, T:Copy, A>
     ( l : Stream<'s,'a,S,A>
     , r : &'s Stream<'s,'a,T,A>) -> Stream<'s, 'a, Either<S,T>, A>
 {
-    let x = l.seed.clone();
+    let x = l.seed;
     let step = move |a: Either<S,T>| {
         match a {
             Left(sa) => {
