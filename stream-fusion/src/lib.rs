@@ -1,5 +1,6 @@
 //
 // Example of how to do stream fusion iterators in Rust
+// using pure functions only
 //
 // Todo: put in impl, use good syntax
 // Hide the seed parameter
@@ -20,18 +21,6 @@ enum Step<S: Seed, A> {
 pub struct Stream<'s,  S: Seed, A: Copy> {
     next: Box<dyn Fn(S) -> Step<S, A> + 's>,
     seed: S
-}
-
-// XXX can't get this to compile, as it won't unify the 'S' param against the opaque types
-impl<S: Seed ,A: Copy> Stream<'_,S/* impl Seed */, A> {
-
-  //  pub fn is_empty(&self) -> bool {
-  //      is_empty_f(&self)
-  //  }
-
- //   pub fn new() -> Self {
- //       empty_f::<A>()
- //   }
 }
 
 pub trait Seed: Copy {}
