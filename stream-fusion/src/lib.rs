@@ -10,43 +10,38 @@ use either::Either;
 use either::Either::*;
 
 // Result of taking a single step in a stream
-enum Step<S, A> {
+enum Step<S: Seed, A> {
     Yield(A, S),
-    Skip(S), // unboxed seeds only please
+    Skip(S),
     Done,
 }
 
 // data Stream a = forall s. Stream (s -> (Step s a)) s
-pub struct Stream<'s, S, A> {
+pub struct Stream<'s,  S: Seed, A: Copy> {
     next: Box<dyn Fn(S) -> Step<S, A> + 's>,
-    seed: S,
+    seed: S
 }
 
-impl<A: Copy, S: Copy + Seed> Stream<'_,S,A> {
+impl<A: Copy, S: Seed> Stream<'_,S, A> {
+
     pub fn is_empty(&self) -> bool {
         is_empty_f(&self)
     }
 
-//    pub fn new() -> Self {
-//        empty_f::<A>()
-//    }
+    //pub fn new() -> Self {
+    //    empty_f::<A>()
+    //}
 }
 
-pub trait Seed {}
+pub trait Seed: Copy {}
 impl Seed for () {}
 impl Seed for bool {}
-
-/*
-// alternative, implement as a trait
-trait Stream1<A> {
-    type Seed;
-    fn next1<'a>(sd: Self::Seed) -> Step<'a, Self::Seed, A>;
-    fn seed1() -> Self::Seed;
-}
-*/
+impl Seed for usize {}
+impl<S: Seed, T:Seed> Seed for Either<S,T> {}
+impl<S: Seed, T:Seed> Seed for (S, T) {}
 
 // Check if a 'Stream' is empty
-pub fn is_empty_f<'s, A, S: Copy>(s: &Stream<'s, S, A>) -> bool {
+pub fn is_empty_f<'s, A : Copy>(s: &Stream<'s, impl Seed, A>) -> bool {
     let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
@@ -59,7 +54,7 @@ pub fn is_empty_f<'s, A, S: Copy>(s: &Stream<'s, S, A>) -> bool {
 }
 
 // The empty stream
-pub fn empty_f<'s, A>() -> Stream<'s, (), A> {
+pub fn empty_f<'s, A: Copy>() -> Stream<'s, impl Seed, A> {
     Stream {
         next: Box::new(|_| Step::Done),
         seed: (),
@@ -82,10 +77,10 @@ pub fn singleton<'s, A: 's + Copy>(a: A) -> Stream<'s, bool, A> {
 }
 
 // Concatenate two streams
-pub fn append<'s, S: Copy + 's, T: Copy + 's, A: Copy + 's>(
+pub fn append<'s, S: Seed + Copy + 's, T: Seed + Copy + 's, A: Copy + 's>(
     l: Stream<'s, S, A>,
     r: Stream<'s, T, A>,
-) -> Stream<'s, Either<S, T>, A> {
+) -> Stream<'s, impl Seed, A> {
     let x = l.seed;
     let step = move |a: Either<S, T>| match a {
         Left(sa) => {
@@ -128,10 +123,10 @@ pub fn replicate<'s, A: 's + Copy>(n: usize, a: A) -> Stream<'s, usize, A> {
 }
 
 // Left fold with a accumulator and an operator
-pub fn foldl<'s, A: 's + Copy, B: 's + Copy, S: Copy>(
+pub fn foldl<'s, A: 's + Copy, B: 's + Copy>(
     f: fn(B, A) -> B,
     w: B,
-    s: &Stream<'s, S, A>,
+    s: &Stream<'s, impl Seed, A>,
 ) -> B {
     let mut st = s.seed;
     let mut z = w;
@@ -149,15 +144,15 @@ pub fn foldl<'s, A: 's + Copy, B: 's + Copy, S: Copy>(
 }
 
 // Length of a stream
-pub fn length<S: Copy, A: Copy>(s: &Stream<S, A>) -> usize {
+pub fn length<S: Copy, A: Copy>(s: &Stream<impl Seed, A>) -> usize {
     foldl(|n, _| n + 1, 0, s)
 }
 
 // Map a function over a 'Stream'
 pub fn map<'s, A: 's + Copy, B: 's + Copy, S: 's + Copy>(
     f: fn(A) -> B,
-    s: Stream<'s, S, A>,
-) -> Stream<'s, S, B> {
+    s: Stream<'s, impl Seed +'s, A>,
+) -> Stream<'s, impl Seed, B> {
     let x = s.seed;
     let step = move |st| {
         let r = (s.next)(st);
@@ -177,7 +172,7 @@ pub fn map<'s, A: 's + Copy, B: 's + Copy, S: 's + Copy>(
 }
 
 // First element of the 'Stream' or None if empty
-pub fn head<'s, A: 's + Copy, S: 's + Copy>(s: &Stream<'s, S, A>) -> Option<A> {
+pub fn head<'s, A: 's + Copy>(s: &Stream<'s, impl Seed, A>) -> Option<A> {
     let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
@@ -190,7 +185,7 @@ pub fn head<'s, A: 's + Copy, S: 's + Copy>(s: &Stream<'s, S, A>) -> Option<A> {
 }
 
 // Last element of the 'Stream' or None if empty
-pub fn last<'s, A: 's + Copy, S: 's + Copy>(s: &Stream<'s, S, A>) -> Option<A> {
+pub fn last<'s, A: 's + Copy>(s: &Stream<'s, impl Seed, A>) -> Option<A> {
     let mut st1 = s.seed;
     // we do this as two loops. one that iterates until we find at least one value
     // the other that then holds the most recent seen one, until it returns
@@ -225,7 +220,7 @@ pub fn last<'s, A: 's + Copy, S: 's + Copy>(s: &Stream<'s, S, A>) -> Option<A> {
 }
 
 // The first @n@ elements of a stream
-pub fn take<'s, A, S: Copy>(n: usize, s: &'s Stream<'s, S, A>) -> Stream<'s, (S, usize), A> {
+pub fn take<'s, A: Copy>(n: usize, s: &'s Stream<'s, impl Seed, A>) -> Stream<'s, impl Seed, A> {
     let step1 = move |(s0, i)| {
         if i < n {
             let r = (s.next)(s0); // run the first stream
@@ -247,10 +242,10 @@ pub fn take<'s, A, S: Copy>(n: usize, s: &'s Stream<'s, S, A>) -> Stream<'s, (S,
 /*
  * need trait or hiding for state
  */
-pub fn cons<'s, A: 's + Copy, S: 's + Copy>(
+pub fn cons<'s, A: 's + Copy>(
     a: A,
-    s: Stream<'s, S, A>,
-) -> Stream<'s, Either<bool, S>, A> {
+    s: Stream<'s, impl Seed + 's, A>,
+) -> Stream<'s, impl Seed, A> {
     let s1 = singleton(a);
     append(s1, s) // consumes
 }
