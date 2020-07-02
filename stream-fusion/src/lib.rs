@@ -18,6 +18,13 @@ struct Stream<'a, S, A> {
     seed: S,
 }
 
+// alternative, implement as a trait
+trait Stream1<A> {
+    type S;
+    fn next1<'a>(sd: Self::S) -> Step<'a, Self::S, A>;
+    fn seed1() -> Self::S;
+}
+
 // Check if a 'Stream' is empty
 fn null<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> bool {
     let mut st1 = s.seed;
