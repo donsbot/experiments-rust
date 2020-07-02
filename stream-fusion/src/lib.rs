@@ -22,6 +22,20 @@ pub struct Stream<'s, S, A> {
     seed: S,
 }
 
+impl<A: Copy, S: Copy + Seed> Stream<'_,S,A> {
+    pub fn is_empty(&self) -> bool {
+        is_empty_f(&self)
+    }
+
+//    pub fn new() -> Self {
+//        empty_f::<A>()
+//    }
+}
+
+pub trait Seed {}
+impl Seed for () {}
+impl Seed for bool {}
+
 /*
 // alternative, implement as a trait
 trait Stream1<A> {
@@ -32,7 +46,7 @@ trait Stream1<A> {
 */
 
 // Check if a 'Stream' is empty
-pub fn null<'s, A, S: Copy>(s: &Stream<'s, S, A>) -> bool {
+pub fn is_empty_f<'s, A, S: Copy>(s: &Stream<'s, S, A>) -> bool {
     let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
@@ -45,7 +59,7 @@ pub fn null<'s, A, S: Copy>(s: &Stream<'s, S, A>) -> bool {
 }
 
 // The empty stream
-pub fn empty<'s, A>() -> Stream<'s, (), A> {
+pub fn empty_f<'s, A>() -> Stream<'s, (), A> {
     Stream {
         next: Box::new(|_| Step::Done),
         seed: (),
@@ -248,15 +262,23 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_empty_m() {
+        let s1: Stream<_, i64> = empty_f();
+        assert_eq!(true, s1.is_empty());
+    }
+
+    /* functional calls */
+
+    #[test]
     fn test_empty() {
-        let s1: Stream<_, i64> = empty();
-        assert_eq!(true, null(&s1));
+        let s1: Stream<_, i64> = empty_f();
+        assert_eq!(true, is_empty_f(&s1));
     }
 
     #[test]
     fn test_singleton() {
         let s1 = singleton(42i64);
-        assert_eq!(false, null(&s1));
+        assert_eq!(false, is_empty_f(&s1));
     }
 
     #[test]
@@ -265,13 +287,13 @@ mod tests {
         let s2 = singleton(64i64);
         let s3 = append(s1, s2);
 
-        assert_eq!(false, null(&s3));
+        assert_eq!(false, is_empty_f(&s3));
     }
 
     #[test]
     fn test_replicate() {
         let s1 = replicate(10, 42i64);
-        assert_eq!(false, null(&s1));
+        assert_eq!(false, is_empty_f(&s1));
     }
 
     #[test]
@@ -295,7 +317,7 @@ mod tests {
     fn test_head() {
         let s1 = replicate(10, 42i64);
         assert_eq!(Some(42), head(&s1));
-        let s1: Stream<_, i64> = empty();
+        let s1: Stream<_, i64> = empty_f();
         assert_eq!(None, head(&s1));
     }
 
@@ -303,7 +325,7 @@ mod tests {
     fn test_last() {
         let s1 = replicate(10, 42i64);
         assert_eq!(Some(42), last(&s1));
-        let s1: Stream<_, i64> = empty();
+        let s1: Stream<_, i64> = empty_f();
         assert_eq!(None, last(&s1));
     }
 
@@ -311,13 +333,13 @@ mod tests {
     fn test_take() {
         let s1 = replicate(10, 42i64);
         assert_eq!(2, length(&take(2, &s1)));
-        let s1: Stream<_, i64> = empty();
+        let s1: Stream<_, i64> = empty_f();
         assert_eq!(0, length(&take(10, &s1)));
     }
 
     #[test]
     fn test_cons() {
-        let s2 = cons(3, cons(4, cons(6, empty())));
+        let s2 = cons(3, cons(4, cons(6, empty_f())));
         assert_eq!(3, length(&s2));
     }
 
