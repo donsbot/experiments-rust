@@ -22,15 +22,16 @@ pub struct Stream<'s,  S: Seed, A: Copy> {
     seed: S
 }
 
-impl<A: Copy, S: Seed> Stream<'_,S, A> {
+// XXX can't get this to compile, as it won't unify the 'S' param against the opaque types
+impl<S: Seed ,A: Copy> Stream<'_,S/* impl Seed */, A> {
 
-    pub fn is_empty(&self) -> bool {
-        is_empty_f(&self)
-    }
+  //  pub fn is_empty(&self) -> bool {
+  //      is_empty_f(&self)
+  //  }
 
-    //pub fn new() -> Self {
-    //    empty_f::<A>()
-    //}
+ //   pub fn new() -> Self {
+ //       empty_f::<A>()
+ //   }
 }
 
 pub trait Seed: Copy {}
