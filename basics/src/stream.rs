@@ -2,25 +2,25 @@
 // Example of how to do stream fusion iterators in Rust
 //
 // Todo: put in impl, use good syntax
-// Hide the state parameter
+// Hide the seed parameter
 //
 
 // Result of taking a single step in a stream
 enum Step<'a, S, A> {
     Yield(&'a A, S),
-    Skip(S), // unboxed states only please
+    Skip(S), // unboxed seeds only please
     Done,
 }
 
 // data Stream a = forall s. Stream (s -> (Step s a)) s
 struct Stream<'a, S, A> {
     next: Box<dyn Fn(S) -> Step<'a, S, A> + 'a>,
-    state: S,
+    seed: S,
 }
 
 // Check if a 'Stream' is empty
 fn null<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> bool {
-    let mut st1 = s.state;
+    let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
         match r {
@@ -35,7 +35,7 @@ fn null<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> bool {
 fn empty<'a, A>() -> Stream<'a, (), A> {
     Stream {
         next: Box::new(|_| Step::Done),
-        state: (),
+        seed: (),
     }
 }
 
@@ -48,10 +48,9 @@ fn singleton<A>(a: &A) -> Stream<bool, A> {
             Step::Done
         }
     };
-
     Stream {
         next: Box::new(step),
-        state: true,
+        seed: true,
     }
 }
 
@@ -89,7 +88,7 @@ fn append<'a, S, T, A>
 
     Stream {
         next: Box::new(step),
-        state: &Left(l.state)
+        seed: &Left(l.seed)
     }
     unimplemented!();
 
@@ -105,17 +104,16 @@ fn replicate<A>(n: usize, a: &A) -> Stream<usize, A> {
             Step::Yield(a, i - 1)
         }
     };
-
     Stream {
         next: Box::new(step),
-        state: n,
+        seed: n,
     }
 }
 
 // First element of the 'Stream' or None if empty
 // head :: Monad m => Stream m a -> m a
 fn head<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
-    let mut st1 = s.state;
+    let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
         match r {
@@ -129,7 +127,7 @@ fn head<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
 // Last element of the 'Stream' or None if empty
 // last :: Monad m => Stream m a -> m a
 fn last<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
-    let mut st1 = s.state;
+    let mut st1 = s.seed;
     // we do this as two loops. one that iterates until we find at least one value
     // the other that then holds the most recent seen one, until it returns
     let mut result: &A;
@@ -178,10 +176,9 @@ fn take<'a, A, S: Copy>(n: usize, s: &'a Stream<S, A>) -> Stream<'a, (S, usize),
             Step::Done
         }
     };
-
     Stream {
         next: Box::new(step1),
-        state: (s.state, 0),
+        seed: (s.seed, 0),
     }
 }
 
