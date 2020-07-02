@@ -13,20 +13,22 @@ enum Step<'a, S, A> {
 }
 
 // data Stream a = forall s. Stream (s -> (Step s a)) s
-struct Stream<'a, S, A> {
-    next: Box<dyn Fn(S) -> Step<'a, S, A> + 'a>,
+struct Stream<'s, 'a, S, A> {
+    next: Box<dyn Fn(S) -> Step<'a, S, A> + 's>,
     seed: S,
 }
 
+/*
 // alternative, implement as a trait
 trait Stream1<A> {
-    type S;
-    fn next1<'a>(sd: Self::S) -> Step<'a, Self::S, A>;
-    fn seed1() -> Self::S;
+    type Seed;
+    fn next1<'a>(sd: Self::Seed) -> Step<'a, Self::Seed, A>;
+    fn seed1() -> Self::Seed;
 }
+*/
 
 // Check if a 'Stream' is empty
-fn null<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> bool {
+fn null<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> bool {
     let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
@@ -39,7 +41,7 @@ fn null<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> bool {
 }
 
 // The empty stream
-fn empty<'a, A>() -> Stream<'a, (), A> {
+fn empty<'s, 'a, A>() -> Stream<'s, 'a, (), A> {
     Stream {
         next: Box::new(|_| Step::Done),
         seed: (),
@@ -119,7 +121,7 @@ fn replicate<A>(n: usize, a: &A) -> Stream<usize, A> {
 
 // First element of the 'Stream' or None if empty
 // head :: Monad m => Stream m a -> m a
-fn head<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
+fn head<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
     let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
@@ -133,7 +135,7 @@ fn head<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
 
 // Last element of the 'Stream' or None if empty
 // last :: Monad m => Stream m a -> m a
-fn last<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
+fn last<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
     let mut st1 = s.seed;
     // we do this as two loops. one that iterates until we find at least one value
     // the other that then holds the most recent seen one, until it returns
@@ -151,7 +153,6 @@ fn last<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
             Step::Done => return None,
         }
     }
-
     // r is definitely initialized now with a possible result
     loop {
         let r = (s.next)(st1);
@@ -170,7 +171,7 @@ fn last<'a, A, S: Copy>(s: &Stream<'a, S, A>) -> Option<&'a A> {
 
 // The first @n@ elements of a stream
 // take :: Monad m => Int -> Stream m a -> Stream m a
-fn take<'a, A, S: Copy>(n: usize, s: &'a Stream<S, A>) -> Stream<'a, (S, usize), A> {
+fn take<'s, 'a, A, S: Copy>(n: usize, s: &'s Stream<'s, 'a, S, A>) -> Stream<'s, 'a, (S, usize), A> {
     let step1 = move |(s0, i)| {
         if i < n {
             let r = (s.next)(s0); // run the first stream
@@ -188,6 +189,33 @@ fn take<'a, A, S: Copy>(n: usize, s: &'a Stream<S, A>) -> Stream<'a, (S, usize),
         seed: (s.seed, 0),
     }
 }
+
+
+// -- | Left fold non-empty with a accumulator
+// foldl1 :: Monad m => (a -> a -> a) -> Stream m a -> m a
+/*
+fn foldl1(f : fn(A, B) -> A,
+         a : A,
+         s : Stream<'a,S,B>) -> Option<A>
+{
+}
+*/
+
+
+/*
+{-# INLINE_FUSED foldlM' #-}
+foldlM' m w (Stream step t) = foldlM'_loop SPEC w t
+  where
+    foldlM'_loop !_ z s
+      = z `seq`
+        do
+          r <- step s
+          case r of
+            Yield x s' -> do { z' <- m z x; foldlM'_loop SPEC z' s' }
+            Skip    s' -> foldlM'_loop SPEC z s'
+            Done       -> return z
+*/
+
 
 /* basic tests */
 pub fn main() {
