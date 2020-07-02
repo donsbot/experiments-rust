@@ -5,6 +5,10 @@
 // Hide the seed parameter
 //
 
+extern crate either;
+use either::Either::*;
+use either::Either;
+
 // Result of taking a single step in a stream
 enum Step<'a, S, A> {
     Yield(&'a A, S),
@@ -13,7 +17,7 @@ enum Step<'a, S, A> {
 }
 
 // data Stream a = forall s. Stream (s -> (Step s a)) s
-struct Stream<'s, 'a, S, A> {
+pub struct Stream<'s, 'a, S, A> {
     next: Box<dyn Fn(S) -> Step<'a, S, A> + 's>,
     seed: S,
 }
@@ -28,7 +32,7 @@ trait Stream1<A> {
 */
 
 // Check if a 'Stream' is empty
-fn null<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> bool {
+pub fn null<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> bool {
     let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
@@ -41,7 +45,7 @@ fn null<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> bool {
 }
 
 // The empty stream
-fn empty<'s, 'a, A>() -> Stream<'s, 'a, (), A> {
+pub fn empty<'s, 'a, A>() -> Stream<'s, 'a, (), A> {
     Stream {
         next: Box::new(|_| Step::Done),
         seed: (),
@@ -49,7 +53,7 @@ fn empty<'s, 'a, A>() -> Stream<'s, 'a, (), A> {
 }
 
 // A stream with a single element
-fn singleton<A>(a: &A) -> Stream<bool, A> {
+pub fn singleton<A>(a: &A) -> Stream<bool, A> {
     let step = move |b: bool| {
         if b {
             Step::Yield(a, false)
@@ -63,49 +67,42 @@ fn singleton<A>(a: &A) -> Stream<bool, A> {
     }
 }
 
-/*
-enum Either<A,B> {
-    Left(A),
-    Right(B)
-}
-
-use Either::*;
-*/
-
 // Concatenate two streams
 // (++) :: Monad m => Stream m a -> Stream m a -> Stream m a
 //
-/*
-fn append<'a, S, T, A>
-    ( l : &Stream<'a,S,A>
-    , r : &Stream<'a,T,A>) -> Stream<'a, Either<S,T>, A>
+pub fn append<'s, 'a, S:Copy, T:Copy, A>
+    ( l : &'s Stream<'s,'a,S,A>
+    , r : &'s Stream<'s,'a,T,A>) -> Stream<'s, 'a, Either<S,T>, A>
 {
-
     let step = move |a: Either<S,T>| {
         match a {
             Left(sa) => {
-    //            let r = (l.f)(sa);
-                unimplemented!();
+                let v = (l.next)(sa);
+                match v {
+                    Step::Yield(x,sa1) => { Step::Yield(x,Left(sa1))}
+                    Step::Skip(sa1)    => { Step::Skip(Left(sa1)) }
+                    Step::Done         => { Step::Skip(Right(r.seed))}
+                }
             }
-
             Right(sb) => {
-    //            let r = (r.f)(sb);
-                unimplemented!()
+                let v = (r.next)(sb);
+                match v {
+                    Step::Yield(x,sb1) => { Step::Yield(x,Right(sb1))}
+                    Step::Skip(sb1)    => { Step::Skip(Right(sb1)) }
+                    Step::Done         => { Step::Done }
+                }
             }
         }
     };
 
     Stream {
         next: Box::new(step),
-        seed: &Left(l.seed)
+        seed: Left(l.seed)
     }
-    unimplemented!();
-
 }
-*/
 
 // Yield a 'Stream' of values obtained by running the generator a given number of times
-fn replicate<A>(n: usize, a: &A) -> Stream<usize, A> {
+pub fn replicate<A>(n: usize, a: &A) -> Stream<usize, A> {
     let step = move |i: usize| {
         if i == 0 {
             Step::Done
@@ -121,7 +118,7 @@ fn replicate<A>(n: usize, a: &A) -> Stream<usize, A> {
 
 // First element of the 'Stream' or None if empty
 // head :: Monad m => Stream m a -> m a
-fn head<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
+pub fn head<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
     let mut st1 = s.seed;
     loop {
         let r = (s.next)(st1);
@@ -135,7 +132,7 @@ fn head<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
 
 // Last element of the 'Stream' or None if empty
 // last :: Monad m => Stream m a -> m a
-fn last<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
+pub fn last<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
     let mut st1 = s.seed;
     // we do this as two loops. one that iterates until we find at least one value
     // the other that then holds the most recent seen one, until it returns
@@ -171,7 +168,9 @@ fn last<'s, 'a, A, S: Copy>(s: &Stream<'s, 'a, S, A>) -> Option<&'a A> {
 
 // The first @n@ elements of a stream
 // take :: Monad m => Int -> Stream m a -> Stream m a
-fn take<'s, 'a, A, S: Copy>(n: usize, s: &'s Stream<'s, 'a, S, A>) -> Stream<'s, 'a, (S, usize), A> {
+pub fn take<'s, 'a, A, S: Copy>(n: usize, s: &'s Stream<'s, 'a, S, A>) ->
+    Stream<'s, 'a, (S, usize), A>
+{
     let step1 = move |(s0, i)| {
         if i < n {
             let r = (s.next)(s0); // run the first stream
@@ -218,21 +217,33 @@ foldlM' m w (Stream step t) = foldlM'_loop SPEC w t
 
 
 /* basic tests */
-pub fn main() {
-    let s1: Stream<(), char> = empty();
-    let s2: Stream<bool, i64> = singleton(&42);
-    let s3: Stream<usize, i64> = replicate(10, &0);
-    let s4: Stream<usize, i64> = replicate(3, &1);
-    let s5 = take(0, &s4);
-    assert_eq!(true, null(&s5));
-    assert_eq!(false, null(&take(2, &s4)));
+mod tests {
+    #[test]
+    fn test_append() {
+        let s1: super::Stream<(), char> = super::empty();
+        let s2: super::Stream<usize, char> = super::replicate(10, &'x');
+        let s3: super::Stream<either::Either<(),usize>, char> = super::append(&s1,&s2);
+        assert_eq!(super::null(&s3), false);
+    }
 
-    assert_eq!(true, null(&s1));
-    assert_eq!(false, null(&s2));
-    assert_eq!(true, null(&s1));
-    assert_eq!(false, null(&s2));
 
-    assert_ne!(head(&s2), None);
-    assert_ne!(head(&s2), head(&s3));
-    assert_eq!(head(&s2), last(&s2));
+    #[test]
+    fn test_0() {
+        let s1: super::Stream<(), char> = super::empty();
+        let s2: super::Stream<bool, i64> = super::singleton(&42);
+        let s3: super::Stream<usize, i64> = super::replicate(10, &0);
+        let s4: super::Stream<usize, i64> = super::replicate(3, &1);
+        let s5 = super::take(0, &s4);
+        assert_eq!(true, super::null(&s5));
+        assert_eq!(false, super::null(&super::take(2, &s4)));
+
+        assert_eq!(true, super::null(&s1));
+        assert_eq!(false, super::null(&s2));
+        assert_eq!(true, super::null(&s1));
+        assert_eq!(false, super::null(&s2));
+
+        assert_ne!(super::head(&s2), None);
+        assert_ne!(super::head(&s2), super::head(&s3));
+        assert_eq!(super::head(&s2), super::last(&s2));
+    }
 }
