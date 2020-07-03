@@ -1,7 +1,11 @@
-mod types;
-use types::Step;
+// Result of taking a single step in a stream
+pub enum Step<S, A> {
+    Yield(A, S),
+    Skip(S),
+    Done,
+}
 
-trait Stream<A> {
+pub trait Stream<A> {
     type Seed: Seedable;
     fn next(&self, Self::Seed) -> Step<Self::Seed, A>;
     fn start(&self) -> Self::Seed;
@@ -19,7 +23,7 @@ trait Stream<A> {
     }
 }
 
-trait Seedable: Copy {}
+pub trait Seedable: Copy {}
 impl Seedable for Empty {}
 
 #[derive(Copy,Clone)]
@@ -44,7 +48,15 @@ fn empty<T>() -> impl Stream<T,Seed=Empty> {
 // wire up paths properly
 // benchmark
 
-pub fn main() {
-    let s: &dyn Stream<i64,Seed=Empty> = &empty();
-    assert_eq!(true, s.is_empty());
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_empty() {
+        let s: &dyn Stream<i64,Seed=Empty> = &empty();
+        assert_eq!(true, s.is_empty());
+    }
+
 }
