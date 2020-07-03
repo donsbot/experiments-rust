@@ -21,6 +21,7 @@ pub trait Seed: Copy {}
 impl Seed for () {}
 impl Seed for bool {}
 impl Seed for usize {}
+impl Seed for i64 {}
 impl<S: Seed, T:Seed> Seed for either::Either<S,T> {}
 impl<S: Seed, T:Seed> Seed for (S, T) {}
 
@@ -107,6 +108,25 @@ pub fn replicate<'s, A: 's + Copy>(n: usize, a: A) -> Stream<'s, impl Seed, A> {
     }
 }
 
+use num_traits::int::PrimInt;
+
+// Yield a 'Stream' of values from A to B-1
+pub fn range<'s, A>(a: A, b : A) -> Stream<'s, impl Seed, A>
+    where A: 's + Seed + Copy + std::ops::Add<Output = A> + PrimInt
+{
+    let step = move |i: A| {
+        if i >= b {
+            Step::Done
+        } else {
+            Step::Yield(i, i + A::one())
+        }
+    };
+    Stream {
+        next: Box::new(step),
+        seed: a,
+    }
+}
+
 // Left fold with a accumulator and an operator
 pub fn foldl<'s, A: 's + Copy, B: 's + Copy>(
     f: fn(B, A) -> B,
@@ -145,6 +165,32 @@ pub fn map<'s, A: 's + Copy, B: 's + Copy>(
             Step::Yield(x, st1) => {
                 let y = f(x);
                 Step::Yield(y, st1)
+            }
+            Step::Skip(st1) => Step::Skip(st1),
+            Step::Done => Step::Done,
+        }
+    };
+    Stream {
+        next: Box::new(step),
+        seed: x,
+    }
+}
+
+// Filter a 'Stream' with a predicate
+pub fn filter<'s, A: 's + Copy>(
+    f: fn(&A) -> bool,
+    s: Stream<'s, impl Seed +'s, A>,
+) -> Stream<'s, impl Seed, A> {
+    let x = s.seed;
+    let step = move |st| {
+        let r = (s.next)(st);
+        match r {
+            Step::Yield(x, st1) => {
+                if f(&x) {
+                    Step::Yield(x, st1)
+                } else {
+                    Step::Skip(st1)
+                }
             }
             Step::Skip(st1) => Step::Skip(st1),
             Step::Done => Step::Done,
@@ -236,9 +282,10 @@ pub fn cons<'s, A: 's + Copy>(
 }
 
 pub fn basic_bench(n: usize) -> i64 {
-    let s1 = replicate(n, 1);
-    let s2 = map(|x| x + 2, s1);
-    foldl(|n, x| n + x, 0, &s2)
+    let s1 = range(0, n as i64);
+    let s2 = filter(|n| n % 2 == 1, s1);
+    let s3 = map(|n| n * 2, s2);
+    foldl(|n, x| n + x, 0, &s3)
 }
 
 /* basic tests */
