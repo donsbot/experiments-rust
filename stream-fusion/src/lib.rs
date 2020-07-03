@@ -9,7 +9,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        assert_eq!(5150, r#trait::basic_bench(100));
-        assert_eq!(300, closure::basic_bench(100));
+        assert_eq!(5000, r#trait::basic_bench(100));
+        assert_eq!(5000, closure::basic_bench(100));
     }
 }
