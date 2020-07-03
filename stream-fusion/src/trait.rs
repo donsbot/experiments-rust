@@ -6,7 +6,7 @@ pub enum Step<S: Stream> {
     Done,
 }
 
-pub trait Stream: Sized + Copy {
+pub trait Stream: Copy + Sized {
     type Item;
 
     fn next(&self) -> Step<Self>;
@@ -84,8 +84,30 @@ pub fn single<A>(a: A) -> Single<A> {
     Single { item: a, state: true }
 }
 
+#[derive(Copy,Clone)]
+pub struct Replicate<A> { item: A, state: usize }
+
+impl<A: Copy> Stream for Replicate<A> {
+    type Item = A;
+
+    fn next(&self) -> Step<Self> {
+        if self.state == 0 {
+            Step::Done
+        } else { 
+            Step::Yield(self.item, Replicate {
+                item: self.item,
+                state: self.state - 1
+            })
+        }
+    }
+}
+
+pub fn replicate<A>(a: A, n: usize) -> Replicate<A> {
+    Replicate { item: a, state: n }
+}
+
 /*
-// todo : map , fold, filter, replicate, length, append, head, take, last, cons
+// todo : map , filter, replicate, append, head, take, last, cons
 // benchmark with generators
 */
 
@@ -112,6 +134,13 @@ mod tests {
         assert_eq!(0, s.length());
         let s: Single<i64> = single(42);
         assert_eq!(1, s.length());
+    }
+
+    #[test]
+    fn test_replicate() {
+        let s = replicate(42i64, 100);
+        assert_eq!(false, s.is_empty());
+        assert_eq!(100, s.length());
     }
 
 }
