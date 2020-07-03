@@ -5,6 +5,8 @@ pub enum Step<S, A> {
     Done,
 }
 
+// todo: put Seed in the stream type? make it mutable?
+
 pub trait Stream<A> {
     type Seed: Seedable;
     fn next(&self, Self::Seed) -> Step<Self::Seed, A>;
@@ -25,6 +27,7 @@ pub trait Stream<A> {
 
 pub trait Seedable: Copy {}
 impl Seedable for Empty {}
+impl Seedable for bool {}
 
 #[derive(Copy,Clone)]
 pub enum Empty { Empty }
@@ -43,6 +46,27 @@ pub fn empty<T>() -> impl Stream<T,Seed=Empty> {
     Empty::Empty
 }
 
+#[derive(Copy,Clone)]
+pub struct Singleton<A> { item : A } 
+
+impl<A: Copy> Stream<A> for Singleton<A> {
+    type Seed = bool;
+    fn next(&self, b: Self::Seed) -> Step<Self::Seed,A> {
+        if b {
+            Step::Yield(self.item, false)
+        } else {
+            Step::Done
+        }
+    }
+    fn start(&self) -> Self::Seed {
+        true
+    }
+}
+
+pub fn singleton<T: Copy>(a: T) -> impl Stream<T,Seed=bool> {
+    Singleton { item: a }
+}
+
 // todo : map , fold, filter, replicate, length, singleton, append, head, take, last, cons
 // use test
 // wire up paths properly
@@ -57,6 +81,12 @@ mod tests {
     fn test_empty() {
         let s: &dyn Stream<i64,Seed=Empty> = &empty();
         assert_eq!(true, s.is_empty());
+    }
+
+    #[test]
+    fn test_singleton() {
+        let s: &dyn Stream<i64,Seed=bool> = &singleton(42);
+        assert_eq!(false, s.is_empty());
     }
 
 }
