@@ -185,7 +185,7 @@ impl<S: Stream, F: Copy> Stream for Filter<S, F>
 }
 
 /*
-// todo : filter, append, head, take, last, cons
+// todo : append, head, take, last, cons
 // benchmark with generators
 */
 
