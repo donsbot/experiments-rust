@@ -7,3 +7,10 @@ authors = ["Don Stewart <dons@fb.com>"]
 
 [dependencies]
 either = "*"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "basics"
+harness = false

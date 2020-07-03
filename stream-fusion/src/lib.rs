@@ -7,6 +7,6 @@ mod tests {
 
     #[test]
     fn it_works() {
-        assert_eq!(r#trait::basic_bench(), closure::basic_bench());
+        assert_eq!(r#trait::basic_bench(100), closure::basic_bench(100));
     }
 }

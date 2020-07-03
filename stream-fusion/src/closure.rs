@@ -235,8 +235,8 @@ pub fn cons<'s, A: 's + Copy>(
     append(s1, s) // consumes
 }
 
-pub fn basic_bench() -> i64 {
-    let s1 = replicate(1000000, 1);
+pub fn basic_bench(n: usize) -> i64 {
+    let s1 = replicate(n, 1);
     let s2 = map(|x| x + 2, s1);
     foldl(|n, x| n + x, 0, &s2)
 }

@@ -188,8 +188,8 @@ impl<S: Stream, F: Copy> Stream for Filter<S, F>
 // todo : append, head, take, last, cons
 */
 
-pub fn basic_bench() -> i64 {
-    replicate(1, 1000000)
+pub fn basic_bench(n: usize) -> i64 {
+    replicate(1, n)
         . map(|x| x + 2)
         . foldl(|n, x| n + x, 0)
 }
