@@ -5,6 +5,14 @@ authors = ["Don Stewart <dons@fb.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "stream_fusion"
+path = "src/lib.rs"
+
+[[bin]]
+name = "stream_test"
+path = "src/bin.rs"
+
 [dependencies]
 either = "*"
 num-traits = "*"
@@ -15,3 +23,4 @@ criterion = "0.3"
 [[bench]]
 name = "basics"
 harness = false
+

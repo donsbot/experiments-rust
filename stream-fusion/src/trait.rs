@@ -218,8 +218,6 @@ impl<S: Stream, F: Copy> Stream for Filter<S, F>
 
 pub fn basic_bench(n: usize) -> i64 {
     range(0, n as i64)
-        . filter(|n| n % 2 == 1)
-        . map(|x| x * 2)
         . foldl(|n, x| n + x, 0)
 }
 
