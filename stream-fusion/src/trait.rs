@@ -27,7 +27,7 @@ pub trait Seedable: Copy {}
 impl Seedable for Empty {}
 
 #[derive(Copy,Clone)]
-enum Empty { Empty }
+pub enum Empty { Empty }
 
 impl<A> Stream<A> for Empty {
     type Seed = Empty;
@@ -39,7 +39,7 @@ impl<A> Stream<A> for Empty {
     }
 }
 
-fn empty<T>() -> impl Stream<T,Seed=Empty> {
+pub fn empty<T>() -> impl Stream<T,Seed=Empty> {
     Empty::Empty
 }
 
