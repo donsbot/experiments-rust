@@ -129,6 +129,34 @@ pub fn replicate<A>(a: A, n: usize) -> Replicate<A> {
     Replicate { item: a, state: n }
 }
 
+#[derive(Copy,Clone)]
+pub struct Range<A> { start: A, end: A }
+
+use num_traits::int::PrimInt;
+
+impl<A> Stream for Range<A>
+    where A: Copy + std::ops::Add<Output = A> + PrimInt
+{
+    type Item = A;
+
+    fn next(&self) -> Step<Self> {
+        if self.start >= self.end {
+            Step::Done
+        } else {
+            Step::Yield(self.start,
+                        Range {
+                            start: self.start + A::one(),
+                            end: self.end
+                        }
+                )
+        }
+    }
+}
+
+pub fn range<A>(a: A, b: A) -> Range<A> {
+    Range { start: a, end : b }
+}
+
 #[derive(Clone,Copy)]
 pub struct Map<S,F> { stream: S, mapf: F }
 
@@ -189,8 +217,9 @@ impl<S: Stream, F: Copy> Stream for Filter<S, F>
 */
 
 pub fn basic_bench(n: usize) -> i64 {
-    replicate(1, n)
-        . map(|x| x + 2)
+    range(0, n as i64)
+        . filter(|n| n % 2 == 1)
+        . map(|x| x * 2)
         . foldl(|n, x| n + x, 0)
 }
 
@@ -224,6 +253,21 @@ mod tests {
         let s = replicate(42i64, 100);
         assert_eq!(false, s.is_empty());
         assert_eq!(100, s.length());
+    }
+
+    #[test]
+    fn test_range() {
+        let s = range(0, 10);
+        assert_eq!(false, s.is_empty());
+        assert_eq!(10, s.length());
+        assert_eq!(45, s.foldl(|n,i| n + i, 0));
+    }
+
+    #[test]
+    fn test_range2() {
+        let s = range(1, 3);
+        assert_eq!(2, s.length());
+        assert_eq!(3, s.foldl(|n,i| n + i, 0));
     }
 
     #[test]
