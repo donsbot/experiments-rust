@@ -22,6 +22,27 @@ pub trait Stream: Sized + Copy {
             }
         }
     }
+
+    fn foldl<B>(self, f: fn(B,Self::Item) -> B, w: B) -> B {
+        let mut stream = self;
+        let mut z = w;
+        loop {
+            let v = stream.next();
+            match v {
+                Step::Yield(x, s) => {
+                    z = f(z, x);
+                    stream = s;
+                }
+                Step::Skip(s) => { stream = s }
+                Step::Done => { return z }
+            }
+        }
+    }
+
+    // Length of a stream
+    fn length(&self) -> usize {
+        self.foldl(|n, _| n + 1, 0)
+    }
 }
 
 use std::marker::PhantomData;
@@ -83,6 +104,14 @@ mod tests {
     fn test_single() {
         let s: Single<i64> = single(42);
         assert_eq!(false, s.is_empty());
+    }
+
+    #[test]
+    fn test_length() {
+        let s: Empty<i64> = empty();
+        assert_eq!(0, s.length());
+        let s: Single<i64> = single(42);
+        assert_eq!(1, s.length());
     }
 
 }
