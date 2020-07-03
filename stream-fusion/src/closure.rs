@@ -17,6 +17,9 @@ pub struct Stream<'s,  S: Seed, A: Copy> {
     seed: S
 }
 
+//
+// A class to hide specific seed implementations
+//
 pub trait Seed: Copy {}
 impl Seed for () {}
 impl Seed for bool {}
