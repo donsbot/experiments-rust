@@ -1,76 +1,72 @@
 // Result of taking a single step in a stream
-pub enum Step<S, A> {
-    Yield(A, S),
+//
+pub enum Step<S: Stream> {
+    Yield(S::Item, S),
     Skip(S),
     Done,
 }
 
-// todo: put Seed in the stream type? make it mutable?
+pub trait Stream: Sized + Copy {
+    type Item;
 
-pub trait Stream<A> {
-    type Seed: Seedable;
-    fn next(&self, Self::Seed) -> Step<Self::Seed, A>;
-    fn start(&self) -> Self::Seed;
+    fn next(&self) -> Step<Self>;
 
     fn is_empty(&self) -> bool {
-        let mut state = self.start();
+        let mut stream = *self;
         loop {
-            let v = self.next(state);
+            let v = stream.next();
             match v {
                 Step::Yield(..) => { return false }
-                Step::Skip(s) => { state = s }
+                Step::Skip(s) => { stream = s }
                 Step::Done => { return true }
             }
         }
     }
 }
 
-pub trait Seedable: Copy {}
-impl Seedable for Empty {}
-impl Seedable for bool {}
+use std::marker::PhantomData;
 
 #[derive(Copy,Clone)]
-pub enum Empty { Empty }
+pub struct Empty<A> { empty: PhantomData<A> }
 
-impl<A> Stream<A> for Empty {
-    type Seed = Empty;
-    fn next(&self, _: Self::Seed) -> Step<Self::Seed,A> {
+impl<A: Copy> Stream for Empty<A> {
+    type Item = A;
+
+    fn next(&self) -> Step<Self> {
         Step::Done
     }
-    fn start(&self) -> Self::Seed {
-        Empty::Empty
-    }
 }
 
-pub fn empty<T>() -> impl Stream<T,Seed=Empty> {
-    Empty::Empty
+pub fn empty<A>() -> Empty<A> {
+    Empty { empty: PhantomData }
 }
 
 #[derive(Copy,Clone)]
-pub struct Singleton<A> { item : A } 
+pub struct Single<A> { item: A, state: bool } 
 
-impl<A: Copy> Stream<A> for Singleton<A> {
-    type Seed = bool;
-    fn next(&self, b: Self::Seed) -> Step<Self::Seed,A> {
-        if b {
-            Step::Yield(self.item, false)
+impl<A: Copy> Stream for Single<A> {
+    type Item = A;
+
+    fn next(&self) -> Step<Self> {
+        if self.state {
+            Step::Yield(self.item, Single {
+                item: self.item,
+                state: false
+            })
         } else {
             Step::Done
         }
     }
-    fn start(&self) -> Self::Seed {
-        true
-    }
 }
 
-pub fn singleton<T: Copy>(a: T) -> impl Stream<T,Seed=bool> {
-    Singleton { item: a }
+pub fn single<A>(a: A) -> Single<A> {
+    Single { item: a, state: true }
 }
 
-// todo : map , fold, filter, replicate, length, singleton, append, head, take, last, cons
-// use test
-// wire up paths properly
-// benchmark
+/*
+// todo : map , fold, filter, replicate, length, append, head, take, last, cons
+// benchmark with generators
+*/
 
 #[cfg(test)]
 mod tests {
@@ -79,13 +75,13 @@ mod tests {
 
     #[test]
     fn test_empty() {
-        let s: &dyn Stream<i64,Seed=Empty> = &empty();
+        let s: Empty<i64> = empty();
         assert_eq!(true, s.is_empty());
     }
 
     #[test]
-    fn test_singleton() {
-        let s: &dyn Stream<i64,Seed=bool> = &singleton(42);
+    fn test_single() {
+        let s: Single<i64> = single(42);
         assert_eq!(false, s.is_empty());
     }
 
