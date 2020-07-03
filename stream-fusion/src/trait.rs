@@ -1,5 +1,11 @@
 // Result of taking a single step in a stream
 //
+// Trait implementation:
+//  - generators and transformers are data types
+//  - impl Stream for each type
+//  - consumers are trait methods
+//  - seed of stream stored in trait types
+//
 pub enum Step<S: Stream> {
     Yield(S::Item, S),
     Skip(S),
@@ -51,6 +57,13 @@ pub trait Stream: Sized + Copy {
             where F: Fn(Self::Item) -> B
     {
         Map { stream: self, mapf: f }
+    }
+
+    // Filter a 'stream' with a predicate
+    fn filter<F>(self, f:F) -> Filter<Self,F>
+            where F: Fn(&Self::Item) -> bool
+    {
+        Filter { stream: self, filterp: f }
     }
 
 }
@@ -142,6 +155,35 @@ impl<S: Stream, B:Copy, F: Copy> Stream for Map<S, F>
     }
 }
 
+#[derive(Clone,Copy)]
+pub struct Filter<S,F> { stream: S, filterp: F }
+
+impl<S: Stream, F: Copy> Stream for Filter<S, F>
+    where F: Fn(&S::Item) -> bool
+{
+    type Item = S::Item;
+
+    fn next(&self) -> Step<Self> {
+        let p = self.filterp;
+        match self.stream.next() {
+            Step::Done => Step::Done,
+            Step::Skip(s) =>
+                Step::Skip(Filter { 
+                    stream: s,
+                    filterp: p
+                }),
+            Step::Yield(x, s) => {
+                let s1 = Filter { stream: s, filterp: p };
+                if p(&x) {
+                    Step::Yield (x, s1)
+                } else {
+                    Step::Skip(s1)
+                }
+            }
+        }
+    }
+}
+
 /*
 // todo : filter, append, head, take, last, cons
 // benchmark with generators
@@ -184,6 +226,15 @@ mod tests {
         let s1 = replicate(42i64, 10);
         let v = s1.map(|x| { x + 1 } ).foldl(|n, i| n + i, 0);
         assert_eq!(v, 43 * 10)
+    }
+
+    #[test]
+    fn test_filter() {
+        let s1 = replicate(42i64, 10);
+        let v = s1.map(|x| { x + 1 } )
+                  .filter(|x| { x % 2 == 0 } )
+                  .foldl(|n, i| n + i, 0);
+        assert_eq!(v, 0)
     }
 
 }
