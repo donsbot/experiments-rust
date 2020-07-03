@@ -186,8 +186,13 @@ impl<S: Stream, F: Copy> Stream for Filter<S, F>
 
 /*
 // todo : append, head, take, last, cons
-// benchmark with generators
 */
+
+pub fn basic_bench() -> i64 {
+    replicate(1, 1000000)
+        . map(|x| x + 2)
+        . foldl(|n, x| n + x, 0)
+}
 
 #[cfg(test)]
 mod tests {
@@ -230,11 +235,10 @@ mod tests {
 
     #[test]
     fn test_filter() {
-        let s1 = replicate(42i64, 10);
-        let v = s1.map(|x| { x + 1 } )
+        let v = replicate(42i64, 10)
+                  .map(|x| { x + 1 } )
                   .filter(|x| { x % 2 == 0 } )
                   .foldl(|n, i| n + i, 0);
         assert_eq!(v, 0)
     }
-
 }
