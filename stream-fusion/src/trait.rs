@@ -6,7 +6,7 @@ pub enum Step<S: Stream> {
     Done,
 }
 
-pub trait Stream: Copy + Sized {
+pub trait Stream: Sized + Copy {
     type Item;
 
     fn next(&self) -> Step<Self>;
@@ -23,7 +23,9 @@ pub trait Stream: Copy + Sized {
         }
     }
 
-    fn foldl<B>(self, f: fn(B,Self::Item) -> B, w: B) -> B {
+    fn foldl<B,F>(self, f: F, w: B) -> B
+          where F : Fn(B,Self::Item) -> B
+    {
         let mut stream = self;
         let mut z = w;
         loop {
@@ -43,6 +45,14 @@ pub trait Stream: Copy + Sized {
     fn length(&self) -> usize {
         self.foldl(|n, _| n + 1, 0)
     }
+
+    // Map a function over a 'Stream'
+    fn map<B,F>(self, f:F) -> Map<Self,F>
+            where F: Fn(Self::Item) -> B
+    {
+        Map { stream: self, mapf: f }
+    }
+
 }
 
 use std::marker::PhantomData;
@@ -106,8 +116,34 @@ pub fn replicate<A>(a: A, n: usize) -> Replicate<A> {
     Replicate { item: a, state: n }
 }
 
+#[derive(Clone,Copy)]
+pub struct Map<S,F> { stream: S, mapf: F }
+
+impl<S: Stream, B:Copy, F: Copy> Stream for Map<S, F>
+    where F: Fn(S::Item) -> B
+{
+    type Item = B;
+
+    fn next(&self) -> Step<Self> {
+        let f = self.mapf;
+        match self.stream.next() {
+            Step::Done => Step::Done,
+            Step::Skip(s) =>
+                Step::Skip(Map { 
+                    stream: s,
+                    mapf: f
+                }),
+            Step::Yield(x, s) =>
+                Step::Yield(f(x), Map {
+                    stream: s,
+                    mapf: f
+                }),
+        }
+    }
+}
+
 /*
-// todo : map , filter, replicate, append, head, take, last, cons
+// todo : filter, append, head, take, last, cons
 // benchmark with generators
 */
 
@@ -141,6 +177,13 @@ mod tests {
         let s = replicate(42i64, 100);
         assert_eq!(false, s.is_empty());
         assert_eq!(100, s.length());
+    }
+
+    #[test]
+    fn test_map() {
+        let s1 = replicate(42i64, 10);
+        let v = s1.map(|x| { x + 1 } ).foldl(|n, i| n + i, 0);
+        assert_eq!(v, 43 * 10)
     }
 
 }
