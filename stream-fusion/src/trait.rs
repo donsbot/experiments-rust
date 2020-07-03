@@ -1,10 +1,5 @@
-
-// Result of taking a single step in a stream
-enum Step<S, A> {
-    Yield(A, S),
-    Skip(S),
-    Done,
-}
+mod types;
+use types::Step;
 
 trait Stream<A> {
     type Seed: Seedable;
@@ -43,6 +38,11 @@ impl<A> Stream<A> for Empty {
 fn empty<T>() -> impl Stream<T,Seed=Empty> {
     Empty::Empty
 }
+
+// todo : map , fold, filter, replicate, length, singleton, append, head, take, last, cons
+// use test
+// wire up paths properly
+// benchmark
 
 pub fn main() {
     let s: &dyn Stream<i64,Seed=Empty> = &empty();

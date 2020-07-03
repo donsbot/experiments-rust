@@ -1,21 +1,14 @@
 //
 // Example of how to do stream fusion iterators in Rust
-// using pure functions only
+// using pure functions/closure passing only
 //
-// Todo: put in impl, use good syntax
-// Hide the seed parameter
-//
+
+mod types;
+use types::Step;
 
 extern crate either;
 use either::Either;
 use either::Either::*;
-
-// Result of taking a single step in a stream
-enum Step<S: Seed, A> {
-    Yield(A, S),
-    Skip(S),
-    Done,
-}
 
 // data Stream a = forall s. Stream (s -> (Step s a)) s
 pub struct Stream<'s,  S: Seed, A: Copy> {
