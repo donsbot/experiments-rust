@@ -1,7 +1,7 @@
-mod closure;
+mod r#trait;
 
 extern crate num_traits;
 
 fn main() {
-    println!("{}", closure::basic_bench(1_000_000));
+    println!("{}", r#trait::basic_bench(1_000_000));
 }
