@@ -131,6 +131,7 @@ pub fn range<'s, A>(a: A, b : A) -> Stream<'s, impl Seed, A>
 }
 
 // Left fold with a accumulator and an operator
+#[inline(always)]
 pub fn foldl<'s, A: 's + Copy, B: 's + Copy>(
     f: fn(B, A) -> B,
     w: B,
@@ -157,6 +158,7 @@ pub fn length<A: Copy>(s: &Stream<impl Seed, A>) -> usize {
 }
 
 // Map a function over a 'Stream'
+#[inline(always)]
 pub fn map<'s, A: 's + Copy, B: 's + Copy>(
     f: fn(A) -> B,
     s: Stream<'s, impl Seed +'s, A>,
