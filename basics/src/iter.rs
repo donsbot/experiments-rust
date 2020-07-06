@@ -107,4 +107,17 @@ pub fn main() {
             println!();
         }
     }
+
+    // adaptors ("transformers")
+    // more parsing stuff
+    {
+        let text = "     ponies \n giraffes \n monkeys\nsquid".to_string();
+        let v: Vec<&str> =
+            text.lines()
+                .map(str::trim)
+                .filter(|s| *s != "monkeys")
+                .collect();
+        assert_eq!(v, ["ponies","giraffes","squid"]);
+
+    }
 }
