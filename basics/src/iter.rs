@@ -120,4 +120,37 @@ pub fn main() {
         assert_eq!(v, ["ponies","giraffes","squid"]);
 
     }
+
+    // laziness
+    {
+        // this does nothing
+        ["launch","the","missles"].iter().map(|e|println!("fire: {}",e));
+    }
+
+    // more functions
+    {
+        let j = (0i64..100) // twice to avoid sharing
+                 .filter_map(|n| if n % 2 == 0 { Some (n*2) } else { None })
+                 .take(10);
+        for i in j {
+            println!("{}",i);
+        }
+        let k = (0i64..100)
+                 .filter(|n| n % 2 == 0)
+                 .map(|n| n * 2)
+                 .take(10);
+        for i in k {
+            println!("{}",i);
+        }
+
+        use std::str::FromStr;
+
+        let text ="1\nfrond .25 289\n3.1415 estuary\n";
+        for n in text.split_whitespace()
+                     .filter_map(|w| f64::from_str(w).ok()) {
+                         println!("{:4.2}", n.sqrt());
+        }
+
+        
+    }
 }
