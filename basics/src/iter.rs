@@ -78,8 +78,9 @@ pub fn main() {
     }
 
     // instances
+    #[allow(clippy::unnecessary_fold)]
     {
-        let i = (1i32..100).into_iter();
+        let i = 1i32..100; // .into_iter();
         println!("{}", i.fold(0, |n, i| n + i));
 
         // loops 0 or 1 times
@@ -122,6 +123,7 @@ pub fn main() {
     }
 
     // laziness
+    #[allow(unused_must_use)]
     {
         // this does nothing
         ["launch","the","missles"].iter().map(|e|println!("fire: {}",e));
