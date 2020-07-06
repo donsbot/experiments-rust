@@ -152,7 +152,104 @@ pub fn main() {
                      .filter_map(|w| f64::from_str(w).ok()) {
                          println!("{:4.2}", n.sqrt());
         }
+    }
 
-        
+    // flat_map / concat_map
+    {
+        let j = 0i64 .. 20;
+        let k: Vec<Vec<i64>> = j.map(|i| { (0 .. i).collect() }).collect();
+        for x in k {
+            let l = x.len();
+            for _ in x {
+                print!("#");
+            }
+            println!("{}",l);
+        }
+
+        use std::collections::HashMap;
+
+        let mut ms = HashMap::new();
+        ms.insert("Japan", vec!["Tokyo", "Kyoto"]);
+        ms.insert("Australia", vec!["Sydney", "Darwin"]);
+
+        let countries = ["Australia", "Japan"];
+
+        // flatten a set of keys. index into a hashtable
+        for &city in countries.iter().flat_map(|c| &ms[c]) {
+            println!("{}",city);
+        }
+    }
+
+    // scan
+    {
+        let iter = (0..20)
+            .scan(0, |sum, i| { // short circuiting scanl
+                *sum += i;
+                if *sum > 1000 {
+                    None
+                } else {
+                    Some(i * i)
+                }
+            });
+
+        for x in iter.collect::<Vec<i32>>() {
+            print!("{}-",x);
+        }
+        println!();
+
+    }
+
+    // take , take_while
+    {
+        let iter = (0..20)
+            .take_while(|n| *n <= 10)
+            .take(3);
+        for x in iter.collect::<Vec<i32>>() {
+            print!("{}-",x);
+        }
+        println!();
+
+    }
+
+    // skips (can't call it drop!)
+    {
+        let iter = (0..20)
+            .skip_while(|n| *n <= 10)
+            .skip(3);
+        for x in iter.collect::<Vec<i32>>() {
+            print!("{}-",x);
+        }
+        println!();
+    }
+
+    // peekable... look at the next item in the iterator but dont' consume it. lookahead?
+    {
+        use std::iter::Peekable;
+
+        // pull first set of digits off a string
+        fn parse_number<I> (toks: &mut Peekable<I>) -> u32
+            where I: Iterator<Item=char>
+        {
+            let mut n = 0;
+            loop {
+                match toks.peek() {
+                    Some(r) if r.is_digit(10) => {
+                        n = n*10 + r.to_digit(10).unwrap();
+                    }
+                    _ => return n
+                }
+                toks.next();
+            }
+        }
+        // iterator of characters
+        let mut chars = "226153290,112312321".chars().peekable();
+
+        let x = parse_number(&mut chars);
+        println!("{:?}",x);
+        let x = parse_number(&mut chars);
+        println!("{:?}",x);
+        chars.next(); // bump state. 
+        let x = parse_number(&mut chars);
+        println!("{:?}",x);
     }
 }
