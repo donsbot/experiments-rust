@@ -1,10 +1,12 @@
 // ch 15: pg 322
 
 pub fn main() {
+    // introduction
+
     #[allow(clippy::while_let_on_iterator)]
     #[allow(clippy::into_iter_on_ref)]
     {
-        let v = vec!["abc","abcd","foo","bar"];
+        let v = vec!["abc", "abcd", "foo", "bar"];
         for e in &v {
             println!("{}", e);
         }
@@ -16,14 +18,15 @@ pub fn main() {
         }
 
         // vec ref to iterator
-        let mut i = 1 .. 10; // directly construct an iterator object
+        let mut i = 1..10; // directly construct an iterator object
         while let Some(e) = i.next() {
             println!("{}", e);
         }
         println!("{:?}", i.next());
         println!("{:?}", i.next());
-
     }
+
+    // generation
 
     // generating iterators by references and values
     #[allow(clippy::into_iter_on_ref)]
@@ -51,16 +54,16 @@ pub fn main() {
         use std::fmt::Debug;
 
         fn dump<T, U>(t: T)
-            where T: IntoIterator<Item=U>,
-                  U: Debug
+        where
+            T: IntoIterator<Item = U>,
+            U: Debug,
         {
             for u in t {
                 println!("{:?}", u);
             }
         }
-        let v = vec!["abc","abcd","foo","bar"];
+        let v = vec!["abc", "abcd", "foo", "bar"];
         dump(v);
-
     }
 
     // drain: passes ownership , drops the rest
@@ -72,8 +75,36 @@ pub fn main() {
         let inner = String::from_iter(outer.drain(1..4));
         assert_eq!(outer, "Eh");
         assert_eq!(inner, "art");
-
-
     }
 
+    // instances
+    {
+        let i = (1i32..100).into_iter();
+        println!("{}", i.fold(0, |n, i| n + i));
+
+        // loops 0 or 1 times
+        for i in Some(1).iter() {
+            println!("{}", i);
+        }
+
+        // interesting slices on vectors
+        let v = vec![1i64; 1024];
+        println!("{}", v.windows(4).len()); // 4-element long  prefix scans?
+        println!("{}", v.chunks(16).len()); // 64 * 16 chunks of v
+
+        // tokenize
+        let o = &[
+            "asdbaf".to_string(),
+            "df".to_string(),
+            "ASDfdsa".to_string(),
+            "TOK".to_string(),
+            "Dsdfa".to_string(),
+        ];
+        for i in o.split(|b| *b == "TOK") {
+            for l in i {
+                print!("{}-", l);
+            }
+            println!();
+        }
+    }
 }
