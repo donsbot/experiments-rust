@@ -17,13 +17,10 @@ pub trait Stream: Sized + Copy {
     fn next(&self) -> Step<Self>;
 
     fn is_empty(&self) -> bool {
-        let stream = *self;
-        loop {
-            let v = stream.next();
-            match v {
-                Step::Yield(..) => { return false }
-                Step::Done => { return true }
-            }
+        let v = self.next();
+        match v {
+            Step::Yield(..) => { false }
+            Step::Done => { true }
         }
     }
 
