@@ -283,4 +283,108 @@ pub fn main() {
         assert_eq!(f1.next(), None);
         assert_ne!(f1.next(), Some("the last item"));
     }
+
+    // reversible/ double ended iterators. a next_back() method
+    // useful for arrays/slices
+    {
+        let bee = ["head", "thorax", "abdomen"];
+
+        let mut iter = bee.iter();
+
+        assert_eq!(iter.next() , Some(&"head"));
+        assert_eq!(iter.next_back() , Some(&"abdomen"));
+        assert_eq!(iter.next() , Some(&"thorax"));
+        assert_eq!(iter.next_back() , None);
+
+        let ns: std::ops::Range<i64> = 1..100;
+        let mut i = ns.rev();
+        assert_eq!(i.next() , Some(99));
+
+    }
+
+    // inspect: debugging the composition of iterators
+    {
+        let uc: String = "groSsse".chars()
+            .inspect(|c| println!("before: {:?}", c))
+            .flat_map(|c| c.to_uppercase())
+            .inspect(|c| println!("after:        {:?}", c))
+            .collect();
+        assert_eq!(uc, "GROSSSE");
+    }
+
+    // chaining - appending.
+    {
+        let a = 1..10;
+        let b = -20..-10;
+        let vs: Vec<i64> = a.chain(b).collect();
+        println!("{:?}", vs);
+    }
+
+    // enumerate. zipwith count
+    {
+        let a = -20 .. -10;
+        let vs: Vec<(usize,i64)> = a.enumerate().collect();
+        println!("{:?}", vs);
+    }
+
+    // zip. length of the shortest iterator
+    {
+        let a = -20 .. -10;
+        let b = -2 .. 10;
+        let vs: Vec<(i64,i64)> = a.zip(b).collect();
+        println!("{:?}", vs);
+    }
+
+    // using by ref than handing it back
+    {
+        let ms = "To: foo\r\n\
+                  From: id\r\n\
+                  \r\n
+                  Ooooh\r\n";
+        let mut lines = ms.lines();
+        println!("Headers:");
+        for h in lines.by_ref().take_while(|l| !l.is_empty()) {
+            println!("{}", h);
+        }
+        println!("Body:");
+        for b in lines {
+            println!("{}", b);
+        }
+            
+    }
+
+    // a cloning iterator
+    {
+        let a = ['1', '2', '3'];
+        assert_eq!(a.iter().next(), Some(&'1'));
+        assert_eq!(a.iter().cloned().next(), Some('1'));
+    }
+
+    // cycle!
+    {
+        let a = 0i64..4;
+        let v = a.cycle();
+        println!("{:?}", v.take(20).collect::<Vec<_>>());
+
+    }
+
+    // fizz buzz in a lazy list style
+    {
+        use std::iter::{once, repeat};
+
+        let fizzes = repeat("").take(2).chain(once("fizz")).cycle();
+        let buzzes = repeat("").take(4).chain(once("buzz")).cycle();
+
+        let fizz_buzz = (1..10).zip(fizzes.zip(buzzes))
+            .map(|i|
+                 match i {
+                     (i, ("","")) => i.to_string(),
+                     (_, (f,b)) => format!("{}{}", f, b)
+                 });
+        for l in fizz_buzz { 
+            println!("{}", l);
+        }
+
+    }
+
 }
