@@ -387,4 +387,25 @@ pub fn main() {
 
     }
 
+    // consuming
+    {
+        println!("{}", (1..30).by_ref().product::<i128>());
+        println!("{}", (1..30).sum::<i16>());
+        println!("{:?}", (1..30).max());
+        println!("{:?}", (1..30).min());
+
+        println!("{}", [0., 1. , 3.].iter().sum::<f64>());
+
+        use std::cmp::Ordering;
+
+        fn cmp(lhs: &&f64, rhs: &&f64) -> Ordering {
+            match lhs.partial_cmp(rhs) {
+                Some(x) => x,
+                _ => Ordering::Less
+            }
+        }
+        let ns = [1., 4., std::f64::NAN, 2.];
+        assert_eq!(ns.iter().max_by(cmp), Some(&2.));
+    }
+
 }
