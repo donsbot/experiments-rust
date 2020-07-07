@@ -252,4 +252,35 @@ pub fn main() {
         let x = parse_number(&mut chars);
         println!("{:?}",x);
     }
+
+    // fuse : Iterators are stateful, you can observe if they have been evaluated
+    {
+        // fuse ensures an adaptor that returns None idempotently continues to do so
+        struct Flaky(bool);
+
+        impl Iterator for Flaky {
+            type Item = &'static str;
+
+            // sort of a boolean state machine
+            fn next(&mut self) -> Option<Self::Item> {
+                if self.0 {
+                    self.0 = false;
+                    Some("the last item")
+                } else {
+                    self.0 = true; // flip flop
+                    None
+                }
+            }
+        }
+
+        let mut f = Flaky(true);
+        assert_eq!(f.next(), Some("the last item"));
+        assert_eq!(f.next(), None);
+        assert_eq!(f.next(), Some("the last item"));
+
+        let mut f1 = Flaky(true).fuse();
+        assert_eq!(f1.next(), Some("the last item"));
+        assert_eq!(f1.next(), None);
+        assert_ne!(f1.next(), Some("the last item"));
+    }
 }
