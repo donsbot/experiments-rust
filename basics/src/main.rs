@@ -6,6 +6,7 @@ mod bounds;
 mod cast;
 mod closures;
 mod collect;
+mod collect1;
 mod compare;
 mod copytypes;
 mod r#enum;
@@ -92,6 +93,7 @@ fn main() {
     cast::cast_main();
     closures::main();
     collect::main();
+    collect1::main();
     compare::main();
     copytypes::main();
     r#enum::main();
