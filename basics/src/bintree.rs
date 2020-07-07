@@ -15,7 +15,7 @@ struct Node<'a,T> {
 pub fn main() {
     let a = make_node(&Empty, 1, &Empty);
     assert_eq!(count(&a), 1);
-    let sub = a.clone();
+    let sub = a; // copy
     let b = make_node(&sub, 2, &Empty);
     assert_eq!(count(&b), 2);
     let sub1 = make_node(&Empty, 7 , &Empty);

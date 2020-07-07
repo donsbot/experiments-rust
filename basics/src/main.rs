@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use std::panic as std_panic;
 
+mod bintree;
 mod bounds;
 mod cast;
 mod closures;
@@ -86,6 +87,7 @@ fn main() {
     // break module
     r#break::break_main();
 
+    bintree::main();
     bounds::main();
     cast::cast_main();
     closures::main();
