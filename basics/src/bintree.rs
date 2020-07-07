@@ -12,6 +12,7 @@ struct Node<'a,T> {
     right: &'a Tree<'a,T>
 }
 
+#[allow(clippy::many_single_char_names)]
 pub fn main() {
     let a = make_node(&Empty, 1, &Empty);
     assert_eq!(count(&a), 1);
