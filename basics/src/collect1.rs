@@ -30,4 +30,10 @@ pub fn main() {
 
     }
 
+    // concats and slices
+    {
+        assert_eq!([[1,2], [2,3]].concat(), [1,2,2,3]);
+        println!("{}", [["foo","bar"], ["baz","qux"]].concat().join(", "));
+    }
+
 }
