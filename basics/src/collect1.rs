@@ -36,4 +36,17 @@ pub fn main() {
         println!("{}", [["foo","bar"], ["baz","qux"]].concat().join(", "));
     }
 
+    // splitting
+    {
+        let i = 1;
+        let j = 2;
+        let mut v = vec![0, 1, 2, 3];
+        let a = &mut v[i];
+        *a += 2; // region of mutability ends
+        let b = &v[j];
+        let c = &v[i];
+
+        println!("{:?}", c + b);
+    }
+
 }
