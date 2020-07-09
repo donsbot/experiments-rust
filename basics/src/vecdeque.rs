@@ -1,6 +1,7 @@
 // ch 16: pg 374: vecdeques
 //
 use std::collections::VecDeque;
+use std::collections::BinaryHeap;
 
 pub fn main() {
     // introduction
@@ -12,5 +13,14 @@ pub fn main() {
         for i in x {
             println!("{}",i );
         }
+    }
+
+    // binary heaps
+    {
+        let mut x: BinaryHeap<i64> = BinaryHeap::new();
+        x.push(7);
+        x.push(3);
+        x.push(1);
+        println!("{}", x.pop().unwrap());
     }
 }
