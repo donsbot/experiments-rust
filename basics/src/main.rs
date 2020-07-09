@@ -35,6 +35,7 @@ mod sharing;
 mod r#struct;
 mod r#trait;
 mod types;
+mod vecdeque;
 
 fn main() {
     let mut ns: Vec<u64> = Vec::new();
@@ -131,6 +132,7 @@ fn main() {
     r#struct::main();
     r#trait::main();
     types::main();
+    vecdeque::main();
 
     println!("All done, thankyou.");
 }
