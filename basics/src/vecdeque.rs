@@ -73,4 +73,17 @@ pub fn main() {
         println!("{:?}", v);
 
     }
+
+    // hash types : derivation
+    {
+        #[derive(PartialEq,Hash,Eq)]
+        struct A {
+            a: String,
+            b: i64
+        }
+        let h : HashSet<A> = vec![A{ a : "foo".to_string(), b: 32 }].into_iter().collect();
+        assert_eq!(h.contains(&A { a : "foo".to_string(), b: 33 } ), false );
+        assert_eq!(h.contains(&A { a : "foo".to_string(), b: 32 } ), true );
+
+    }
 }
