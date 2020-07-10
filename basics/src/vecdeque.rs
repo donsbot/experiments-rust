@@ -4,6 +4,8 @@ use std::collections::VecDeque;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::collections::BTreeMap;
+use std::collections::HashSet;
+use std::collections::BTreeSet;
 
 pub fn main() {
     // introduction
@@ -53,6 +55,18 @@ pub fn main() {
         assert_eq!(h.is_empty(), true);
         assert_eq!(i.is_empty(), false);
         */
+
+    }
+
+    // hashsets / btreesets
+    {
+        // membership
+        let h : HashSet<String> = vec!["foo".to_string() ,"bar".to_string()].into_iter().collect();
+        let b : BTreeSet<String> = vec!["foo".to_string() ,"bar".to_string()].into_iter().collect();
+
+        assert_eq!(h.contains("foo"), true );
+        assert_eq!(b.contains("foo"), true );
+
 
     }
 }
