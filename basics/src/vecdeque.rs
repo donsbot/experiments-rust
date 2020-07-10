@@ -63,10 +63,14 @@ pub fn main() {
         // membership
         let h : HashSet<String> = vec!["foo".to_string() ,"bar".to_string()].into_iter().collect();
         let b : BTreeSet<String> = vec!["foo".to_string() ,"bar".to_string()].into_iter().collect();
+        let b2 : BTreeSet<String> = vec!["baz".to_string() ,"bar".to_string()].into_iter().collect();
 
         assert_eq!(h.contains("foo"), true );
         assert_eq!(b.contains("foo"), true );
 
+        // "bar" is the intersection. shared ref to string in set.  fast(!)
+        let v : Vec<&String> = b.intersection(&b2).collect();
+        println!("{:?}", v);
 
     }
 }
