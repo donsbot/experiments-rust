@@ -22,4 +22,50 @@ pub fn main() {
         }
     }
 
+    // unicode methods
+    {
+        assert_eq!(false, 'X'.is_numeric());
+        assert_eq!(true, 'X'.is_alphabetic());
+        assert_eq!(true, 'X'.is_alphanumeric());
+        assert_eq!(false, 'X'.is_whitespace());
+    }
+
+    // String / str
+    {
+        let s = String::new();
+        assert_eq!(s.len(), 0);
+
+        let s1: &str = "foo";
+        let s2: String = s1.to_string();
+        assert_eq!(s1.len(), 3);
+        assert_eq!(s2.len(), 3);
+
+        let s3  = "man hat tan";
+        let s4 :String  = s3.chars().filter(|c| !c.is_whitespace()).collect();
+        assert_eq!(s4.len(), 9);
+
+        let s5 = &s4[2..4];
+        println!("{}", s5);
+    }
+
+    // joins/appends
+    {
+        let mut s6 = String::new();
+        s6.extend("foo".chars());
+        s6.extend("bar".chars());
+        println!("{}", s6);
+    }
+
+    // writes
+    {
+        use std::fmt::Write;
+
+        let mut l = String::new();
+        let e = writeln!(l, "This {} is the string", "TODO").ok();
+        println!("{:?}", e);
+        println!("{}", l);
+
+
+    }
+
 }
