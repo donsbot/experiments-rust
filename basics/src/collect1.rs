@@ -1,4 +1,5 @@
 // ch 16: collections
+#[allow(clippy::many_single_char_names)]
 pub fn main() {
     // vectors
     {
