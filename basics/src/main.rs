@@ -36,6 +36,7 @@ mod r#struct;
 mod r#trait;
 mod types;
 mod vecdeque;
+mod unicode;
 
 fn main() {
     let mut ns: Vec<u64> = Vec::new();
@@ -133,6 +134,7 @@ fn main() {
     r#trait::main();
     types::main();
     vecdeque::main();
+    unicode::main();
 
     println!("All done, thankyou.");
 }
