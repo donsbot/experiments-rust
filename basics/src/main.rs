@@ -17,6 +17,7 @@ mod foo;
 mod generics;
 mod r#impl;
 mod r#impl2;
+mod io;
 mod iter;
 mod r#json;
 mod lib;
@@ -106,6 +107,7 @@ fn main() {
     r#f64::main();
     r#impl::main();
     r#impl2::main();
+    io::main();
     iter::main();
     r#json::main();
     modules::main();
