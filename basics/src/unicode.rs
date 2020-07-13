@@ -88,7 +88,7 @@ pub fn main() {
     // formatting types
     {
         // Display
-        let x  = (3.14159265, "foo");
+        let x  = (core::f64::consts::PI, "foo");
         let y  = (314159265, "foo");
         println!("{}", x.0);
         println!("{:?}", x);
