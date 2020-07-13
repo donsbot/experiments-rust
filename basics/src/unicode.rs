@@ -1,3 +1,4 @@
+extern crate regex;
 // ch17: pg 392
 
 pub fn main() {
@@ -106,9 +107,19 @@ pub fn main() {
             }
         }
         println!("{}", Complex { r: 42.32, i: -1.23 });
+    }
 
+    // regex package
+    {
+        use regex::{Regex};
 
+        let semver: Regex =
+                Regex::new(r"(\d+)\.(\d+)\.(\d+)(-[-.[:alnum:]]*)?").unwrap();
 
+        let yes = r#"regex = "0.2.5""#;
+        let yes1 = r#"regex = "0.2.5--Xfoo--YFoo""#;
+        assert!(semver.is_match(yes));
+        assert!(semver.is_match(yes1));
     }
 
 }
