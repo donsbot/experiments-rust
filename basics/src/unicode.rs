@@ -51,8 +51,10 @@ pub fn main() {
     // joins/appends
     {
         let mut s6 = String::new();
-        s6.extend("foo".chars());
-        s6.extend("bar".chars());
+        // s6.extend("foo".chars());
+        // s6.extend("bar".chars());
+        s6.push_str("foo");
+        s6.push_str("bar");
         println!("{}", s6);
     }
 
@@ -61,11 +63,19 @@ pub fn main() {
         use std::fmt::Write;
 
         let mut l = String::new();
-        let e = writeln!(l, "This {} is the string", "TODO").ok();
+        let e = writeln!(l, "This TODO is the string").ok();
         println!("{:?}", e);
         println!("{}", l);
+    }
 
+    // searching
+    {
+        let s1 = "One fine day, in the middle of the night";
 
+        // find is very overloaded nice.
+        assert_eq!(s1.find(','), Some(12));
+        assert_eq!(s1.find("night"), Some(35));
+        assert_eq!(s1.find(char::is_whitespace), Some(3));
     }
 
 }
