@@ -78,4 +78,37 @@ pub fn main() {
         assert_eq!(s1.find(char::is_whitespace), Some(3));
     }
 
+    // matching
+    {
+        let code = "\t function noodle() {";
+        assert_eq!(code.trim_start_matches(&[' ', '\t'] as &[char]), "function noodle() {");
+    }
+
+    // formatting types
+    {
+        // Display
+        let x  = (3.14159265, "foo");
+        let y  = (314159265, "foo");
+        println!("{}", x.0);
+        println!("{:?}", x);
+
+        // n.b. this a bug in the book
+        // use std::fmt::Binary;
+        println!("{:#b}", y.0);
+
+        struct Complex { r: f64, i: f64};
+
+        use std::fmt;
+        impl fmt::Display for Complex {
+            fn fmt(&self, dest: &mut fmt::Formatter) -> fmt::Result {
+                let i_sign = if self.i < 0. { '-' } else { '+' };
+                write!(dest, "{} {} {}i", self.r, i_sign, f64::abs(self.i))
+            }
+        }
+        println!("{}", Complex { r: 42.32, i: -1.23 });
+
+
+
+    }
+
 }
