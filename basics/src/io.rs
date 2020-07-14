@@ -25,8 +25,6 @@ pub fn main() {
         one.read_to_string(&mut s).unwrap();
         println!("{}", &s[0..22]);
     }
-
-
 }
 
 use std::io::{self, Read, Write, ErrorKind};
