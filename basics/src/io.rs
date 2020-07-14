@@ -12,6 +12,21 @@ pub fn main() {
     let mut one = File::open("io.rs").unwrap();
     let mut two = File::create("/tmp/io.rs").unwrap();
     copy(&mut one, &mut two).unwrap();
+
+    // higher level io
+    {
+        let mut one = File::open("io.rs").unwrap();
+        let mut v = Vec::new();
+        one.read_to_end(&mut v).unwrap();
+        println!("{}", v.len());
+
+        let mut one = File::open("io.rs").unwrap();
+        let mut s = String::new();
+        one.read_to_string(&mut s).unwrap();
+        println!("{}", &s[0..22]);
+    }
+
+
 }
 
 use std::io::{self, Read, Write, ErrorKind};
