@@ -3,10 +3,13 @@
 use std::io;
 use std::io::prelude::*;
 
-fn grep(target: &str) -> io::Result<()> {
-    let stdin = io::stdin();
+fn grep<R>(target: &str, reader: R) -> io::Result<()>
+    where R: BufRead
+{
+    // let stdin = io::stdin();
 
-    for res in stdin.lock().lines() {
+    // taking the lock is in the api of stdin. interesting. not hidden in an mvar.
+    for res in reader.lines() {
         let l = res?;
         if l.contains(target) {
             println!("{}", l);
@@ -16,5 +19,5 @@ fn grep(target: &str) -> io::Result<()> {
 }
 
 pub fn main() {
-    grep("for").unwrap();
+    grep("for", io::stdin().lock()).unwrap();
 }
